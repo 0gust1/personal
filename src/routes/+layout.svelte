@@ -7,13 +7,7 @@
   <header class="site-header">
     <a href="/" class="flex gap-3 items-center">
       <img src="/Cretan-labyrinth-circular-disc.svg" alt="" class="w-12 h-12" />
-      <h1
-        class=" font-didone"
-        class:small={$page.url.pathname !== '/'}
-        class:big={$page.url.pathname === '/'}
-      >
-        0gust1
-      </h1></a
+      <h1 class="font-didone text-3xl">0gust1</h1></a
     >
   </header>
 
@@ -35,7 +29,7 @@
     background-color: #fff8e7;
   }
   .site-header {
-    @apply px-2 py-2;
+    @apply px-2 py-2 mb-12;
     @apply bg-stone-500 bg-opacity-50;
   }
   .site-header a {
@@ -44,17 +38,11 @@
   .site-main {
     @apply px-2;
     @apply grow;
+    @apply mx-auto;
   }
   .site-footer {
-    @apply px-2;
-    @apply py-2;
+    @apply px-2 py-2 mt-12;
+    @apply border-t border-stone-500 border-opacity-10;
     @apply text-stone-400 text-xs;
-  }
-
-  .small {
-    @apply text-sm;
-  }
-  .big {
-    @apply text-3xl;
   }
 </style>

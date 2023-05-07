@@ -1,7 +1,5 @@
 import { slugFromPath } from '$lib/slugFromPath';
 
-const sections = { posts: 'posts', logs: 'logs' };
-
 /**
  * Here we are using import.meta.glob to get all the files in the posts and logs directory **at build time**.
  * The files are imported as JS modules (special markdown files handled by mdsvex).

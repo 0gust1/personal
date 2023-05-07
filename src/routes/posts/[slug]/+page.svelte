@@ -8,7 +8,7 @@
   $: component = data.component as unknown as C;
 </script>
 
-<div class="prose">
+<div class="prose mx-auto">
   <PageHead title={data.frontmatter.title} description={data.frontmatter.description} />
   <ArticleTitle title={data.frontmatter.title} />
   <ArticleMeta date={data.frontmatter.date} />

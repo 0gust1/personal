@@ -5,7 +5,6 @@
   import ArticleTitle from '$lib/components/ArticleTitle.svelte';
   import ArticleMeta from '$lib/components/ArticleMeta.svelte';
   import ArticleDescription from '$lib/components/ArticleDescription.svelte';
-  import { each } from 'svelte/internal';
 
   export let data: PageData;
 </script>
@@ -46,7 +45,7 @@
 <h2>Topics</h2>
 <div>
   <ul class="topics-list">
-    {#each data.tags as tagAcc}
+    {#each data.tagsInfo.tags as tagAcc}
       <li>
         <span>{tagAcc.tag}({tagAcc.count})</span>
       </li>
@@ -54,6 +53,7 @@
   </ul>
 </div>
 
+<h2>Debug</h2>
 <div>
   {JSON.stringify(data, null, 2)}
 </div>
