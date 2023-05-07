@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import Debug from '$lib/components/Debug.svelte';
   import Cartridge from './cartridge.svelte';
   import PageHead from '$lib/components/PageHead.svelte';
   import ArticleTitle from '$lib/components/ArticleTitle.svelte';
@@ -15,7 +16,7 @@
 
 <h2>Logs</h2>
 <div class="posts-list">
-  <!-- {#each data.logs as { slug, title, author, description, date }}
+  {#each data.logs as { slug, title, author, description, date }}
     <article>
       <div class="order-2">
         <a href="/posts/{slug}">{title}</a>
@@ -26,7 +27,7 @@
         <ArticleMeta {date} />
       </div>
     </article>
-  {/each} -->
+  {/each}
 </div>
 <h2>Posts</h2>
 <div class="posts-list">
@@ -53,10 +54,7 @@
   </ul>
 </div>
 
-<h2>Debug</h2>
-<div>
-  {JSON.stringify(data, null, 2)}
-</div>
+<Debug {data} />
 
 <slot />
 
