@@ -1,5 +1,6 @@
 <script lang="ts">
   import '../app.postcss';
+  import '$lib/code-highlight-styles.css';
   import { page } from '$app/stores';
 </script>
 
