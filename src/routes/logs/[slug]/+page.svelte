@@ -8,8 +8,12 @@
   $: component = data.component as unknown as C;
 </script>
 
-<article class="prose prose-stone dark:prose-invert mx-auto">
-  <PageHead title={data.frontmatter.title} description={data.frontmatter.description} />
+<PageHead
+  title={data.frontmatter.title}
+  description={data.frontmatter.description}
+  lang={data.frontmatter.lang ?? 'en'}
+/>
+<article class="prose prose-stone dark:prose-invert mx-auto" lang={data.frontmatter.lang ?? 'en'}>
   <ArticleTitle title={data.frontmatter.title} />
   <ArticleMeta date={data.frontmatter.date} />
 

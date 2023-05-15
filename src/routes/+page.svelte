@@ -16,14 +16,13 @@
 
 <h2>Logs</h2>
 <div class="posts-list">
-  {#each data.logs as { slug, title, author, description, date }}
+  {#each data.logs as { slug, title, description, date, tags }}
     <article>
       <div class="order-2">
-        <a href="/posts/{slug}">{title}</a>
-        <ArticleTitle {slug} {title} />
-        <ArticleDescription {description} {slug} />
+        <a href="/logs/{slug}">{title}</a>
+        <ArticleDescription {description} {slug} {tags} />
       </div>
-      <div class="order-1">
+      <div class="order-1 w-20">
         <ArticleMeta {date} />
       </div>
     </article>
@@ -31,13 +30,13 @@
 </div>
 <h2>Posts</h2>
 <div class="posts-list">
-  {#each data.posts as { slug, title, author, description, date }}
+  {#each data.posts as { slug, title, description, date, tags }}
     <article class="flex">
       <div class=" order-2">
         <ArticleTitle {slug} {title} />
-        <ArticleDescription {description} {slug} />
+        <ArticleDescription {description} {slug} {tags} />
       </div>
-      <div class="order-1">
+      <div class="order-1 w-20">
         <ArticleMeta {date} />
       </div>
     </article>
@@ -54,13 +53,13 @@
   </ul>
 </div>
 
-<Debug {data} />
+<!-- <Debug {data} /> -->
 
 <slot />
 
 <style lang="postcss">
   h2 {
-    @apply text-xl font-semibold font-didone mt-2;
+    @apply text-xl font-medium font-didone mt-3 mb-1;
   }
 
   .posts-list {
@@ -68,7 +67,7 @@
   }
 
   article {
-    @apply mb-1;
+    @apply mb-1.5;
     @apply flex gap-4;
   }
   .topics-list {

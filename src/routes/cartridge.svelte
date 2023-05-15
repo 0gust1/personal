@@ -13,20 +13,22 @@
     miscellanea_synonyms[Math.floor(Math.random() * miscellanea_synonyms.length)];
 </script>
 
-<p class="text-lg mb-2">{random_synonym} of Ideas, Notes and Ramblings</p>
-<div class="text-stone-500">
-  find me elsewhere:
-  <ul>
-    <li>
-      <a href="https://twitter.com/0gust1" rel="">twitter</a>
-    </li>
-    <li>
-      <a href="https://merveilles.town/@0gust1">merveilles.town</a>
-    </li>
-    <li>
-      <a href="https://github.com/0gust1">github</a>
-    </li>
-  </ul>
+<div class="ml-12 mb-10">
+  <p class="text-lg mb-2">{random_synonym} of Ideas, Notes and Ramblings</p>
+  <div class="text-stone-500 text-sm">
+    find me elsewhere:
+    <ul>
+      <li>
+        <a href="https://twitter.com/0gust1" rel="">twitter</a>
+      </li>
+      <li>
+        <a href="https://merveilles.town/@0gust1">merveilles.town</a>
+      </li>
+      <li>
+        <a href="https://github.com/0gust1">github</a>
+      </li>
+    </ul>
+  </div>
 </div>
 
 <style lang="postcss">
