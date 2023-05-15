@@ -21,6 +21,7 @@ declare global {
       date: string;
       tags?: string[];
       published: boolean;
+      updated_at?: string;
     }
   }
 }
