@@ -34,7 +34,7 @@ export async function GET({ setHeaders }) {
               <item>
                 <guid>${postsUrl}/${post.slug}</guid>
                 <title>${post.title}</title>
-                <description>${post.preview.text}</description>
+                <description>${post.description}</description>
                 <link>${postsUrl}/${post.slug}</link>
                 <pubDate>${new Date(post.date).toUTCString()}</pubDate>
             </item>
