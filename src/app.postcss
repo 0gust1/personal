@@ -3,11 +3,26 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  background-color: #fff8e7;
-}
+@layer base {
+  body {
+    @apply text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
+  }
 
-a {
-  @apply text-blue-500 hover:text-blue-700;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
+  }
+
+  hr {
+    @apply border-eigengrau-400 dark:border-cosmiclatte-700;
+  }
+
+  a,
+  .prose a {
+    @apply underline underline-offset-4 decoration-1 decoration-dotted decoration-eigengrau-900/30 dark:decoration-cosmiclatte-50/50 font-normal text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
+  }
 }

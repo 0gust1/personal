@@ -1,6 +1,7 @@
 <script lang="ts">
   export let date: string;
-  const formattedDate = new Date(date).toLocaleDateString();
+  export let locale = 'fr';
+  const formattedDate = new Date(date).toLocaleDateString(locale);
 </script>
 
 <span>
@@ -9,6 +10,6 @@
 
 <style lang="postcss">
   .date {
-    @apply text-stone-400 font-mono text-sm;
+    @apply text-stone-400 font-mono text-xs font-light;
   }
 </style>
