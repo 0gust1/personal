@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dev } from '$app/environment';
   import type { PageData } from './$types';
   import Debug from '$lib/components/Debug.svelte';
   import Cartridge from './cartridge.svelte';
@@ -33,7 +34,7 @@
   {#each data.posts as { slug, title, description, date, tags }}
     <article class="flex">
       <div class=" order-2">
-        <ArticleTitle {slug} {title} />
+        <a href="/posts/{slug}">{title}</a>
         <ArticleDescription {description} {slug} {tags} />
       </div>
       <div class="order-1 w-20">
@@ -52,9 +53,9 @@
     {/each}
   </ul>
 </div>
-
-<!-- <Debug {data} /> -->
-
+{#if dev}
+  <Debug {data} />
+{/if}
 <slot />
 
 <style lang="postcss">

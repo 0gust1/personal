@@ -14,6 +14,8 @@ declare global {
     type MdsvexResolver = () => Promise<MdsvexFile>;
 
     interface BlogPost {
+      type: string;
+      originalContentPath: string;
       slug: string;
       title: string;
       author?: string;

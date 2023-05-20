@@ -2,19 +2,16 @@
 // It is OK to delete this file if you don't want an RSS feed.
 // credit: https://scottspence.com/posts/make-an-rss-feed-with-sveltekit#add-posts-for-the-rss-feed
 
-import { getAllContent } from '$lib/data/content';
+import { getAllContentOfType } from '$lib/data/content';
 import { siteTitle, siteDescription, websiteURL } from '$lib/config';
 
 export const prerender = true;
-const posts = await getAllContent();
+const posts = await getAllContentOfType('logs');
 
 // update this to something more appropriate for your website
 const websiteDescription = `${siteDescription}`;
-const postsUrl = `${websiteURL}/posts`;
+const postsUrl = `${websiteURL}/logs`;
 
-/**
- * @type {import('@sveltejs/kit').RequestHandler}
- */
 export async function GET({ setHeaders }) {
   setHeaders({
     'Cache-Control': `max-age=0, s-max-age=600`,

@@ -2,11 +2,11 @@
 // It is OK to delete this file if you don't want an RSS feed.
 // credit: https://scottspence.com/posts/make-an-rss-feed-with-sveltekit#add-posts-for-the-rss-feed
 
-import { getAllContent } from '$lib/data/content';
+import { getAllContentOfType } from '$lib/data/content';
 import { siteTitle, siteDescription, websiteURL } from '$lib/config';
 
 export const prerender = true;
-const posts = await getAllContent();
+const posts = await getAllContentOfType('posts');
 
 // update this to something more appropriate for your website
 const websiteDescription = `${siteDescription}`;
