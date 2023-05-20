@@ -4,6 +4,7 @@ import remarkGemoji from 'remark-gemoji';
 import relativeImages from 'mdsvex-relative-images';
 import remarkHeadings from '@vcarl/remark-headings';
 import remarkGfm from 'remark-gfm';
+import remarkToc from 'remark-toc';
 import autolinkHeadings from 'rehype-autolink-headings';
 import slugPlugin from 'rehype-slug';
 import rehypeAccessibleEmojis from 'rehype-accessible-emojis';
@@ -15,7 +16,7 @@ const config = defineConfig({
     dashes: 'oldschool'
   },
 
-  remarkPlugins: [relativeImages, remarkGfm, headings, remarkGemoji],
+  remarkPlugins: [relativeImages, remarkGfm, headings, remarkGemoji, remarkToc],
   rehypePlugins: [
     rehypeAccessibleEmojis,
     slugPlugin,
