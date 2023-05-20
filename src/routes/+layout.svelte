@@ -25,7 +25,7 @@
 <div class="site-container">
   <header class="site-header">
     <a href="/" class="flex gap-3 items-center">
-      <img src="/Cretan-labyrinth-circular-disc.svg" alt="" class="w-12 h-12" />
+      <img src="/Cretan-labyrinth-circular-disc.svg" alt="" class="w-16 h-16" />
       <h1 class="font-didone text-3xl">0gust1</h1></a
     >
     <button

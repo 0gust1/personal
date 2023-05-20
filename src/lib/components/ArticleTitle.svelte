@@ -8,7 +8,13 @@
   const href = slug ? `/posts/${slug}` : '#' + id;
 </script>
 
-{#if slug}
+<h1 class="heading" class:large={!slug} {id}>
+  <a {href}>
+    {title}
+  </a>
+</h1>
+
+<!-- {#if slug}
   <h3 class="heading" class:large={!slug} {id}>
     <a {href}>
       {title}
@@ -20,4 +26,12 @@
       {title}
     </a>
   </h2>
-{/if}
+{/if} -->
+
+<style lang="postcss">
+  h1 {
+    @apply font-didone;
+  }
+  h1 a {
+  }
+</style>
