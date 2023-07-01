@@ -14,7 +14,7 @@
   <link
     rel="alternate"
     type="application/rss+xml"
-    title="0gust1 - all posts"
+    title="0gust1 - all blog posts"
     href="/posts/rss.xml"
   />
   <script>

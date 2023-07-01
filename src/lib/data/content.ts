@@ -2,6 +2,7 @@
  * warning: This file is still a bit of a mess
  */
 import { dev } from '$app/environment';
+import { base } from '$app/paths';
 import { slugFromPath, urlFromPath } from '$lib/slugFromPath';
 
 let allContentMetadata: App.BlogPost[] = [];
@@ -45,6 +46,7 @@ const contentMetadataFromModules = (modules: Record<string, () => Promise<unknow
           type: postTypeFromPath(path),
           slug: slugFromPath(path),
           originalContentPath: path,
+          contentURL: `${base}${urlFromPath(path)}`,
           ...(post as unknown as App.MdsvexFile).metadata
         } as App.BlogPost)
     )

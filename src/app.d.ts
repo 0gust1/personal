@@ -16,6 +16,7 @@ declare global {
     interface BlogPost {
       type: string;
       originalContentPath: string;
+      contentURL: string;
       slug: string;
       title: string;
       author?: string;
