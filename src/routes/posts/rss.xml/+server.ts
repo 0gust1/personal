@@ -7,7 +7,7 @@ import { getRSS } from '$lib/rss_gen';
 import { siteDescription } from '$lib/config';
 
 export const prerender = true;
-const posts = await getAllContentOfType('posts');
+const blogPostsCollection = await getAllContentOfType('posts');
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
@@ -18,7 +18,7 @@ export async function GET({ setHeaders }) {
     'Content-Type': 'application/xml'
   });
 
-  const xml = getRSS(posts, '/posts/rss.xml', `${siteDescription} - all blog posts`);
+  const xml = getRSS(blogPostsCollection, '/posts/rss.xml', `${siteDescription} - all blog posts`);
 
   return new Response(xml);
 }

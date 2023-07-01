@@ -7,7 +7,7 @@ import { getRSS } from '$lib/rss_gen';
 import { siteDescription } from '$lib/config';
 
 export const prerender = true;
-const posts = await getAllContentOfType('logs');
+const logsContentCollection = await getAllContentOfType('logs');
 
 export async function GET({ setHeaders }) {
   setHeaders({
@@ -15,7 +15,7 @@ export async function GET({ setHeaders }) {
     'Content-Type': 'application/xml'
   });
 
-  const xml = getRSS(posts, '/logs/rss.xml', `${siteDescription} - all logs`);
+  const xml = getRSS(logsContentCollection, '/logs/rss.xml', `${siteDescription} - all logs`);
 
   return new Response(xml);
 }
