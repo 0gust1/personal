@@ -9,6 +9,14 @@
 </script>
 
 <svelte:head>
+  <link rel="alternate" type="application/rss+xml" title="0gust1 - all content" href="/rss.xml" />
+  <link rel="alternate" type="application/rss+xml" title="0gust1 - all logs" href="/logs/rss.xml" />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="0gust1 - all posts"
+    href="/posts/rss.xml"
+  />
   <script>
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
     if (
