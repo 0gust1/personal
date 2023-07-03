@@ -25,6 +25,8 @@
   let m = { x: 0, y: 0 };
   let canvasWidth: number;
   let canvasHeight: number;
+  let clientWidth: number;
+  let clientHeight: number;
   let gl: WebGLRenderingContext | null;
   let program: WebGLProgram | null;
   let positionBuffer: WebGLBuffer | null;
@@ -50,7 +52,7 @@
 
   function setupWebGL() {
     let frame: number;
-    //window.removeEventListener(evt.type, setupWebGL, false);
+
     if (!(gl = getRenderingContext())) return;
     try {
       program = createProgramFromSources(gl, [vs, fragShader]) as WebGLProgram; //will be checked later
@@ -121,6 +123,13 @@
     }
   }
 
+  function handleMousemove(event: MouseEvent) {
+    let s = scale * 100;
+
+    m.x = (event.clientX / clientWidth) * s;
+    m.y = (event.clientY / clientHeight) * s;
+  }
+
   function getRenderingContext() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
@@ -138,7 +147,7 @@
   }
 </script>
 
-<div class="canvas_container">
+<div class="canvas_container" on:mousemove={handleMousemove} bind:clientWidth bind:clientHeight>
   <canvas class="" bind:this={canvas} width={canvasWidth} height={canvasHeight} />
   {#if error}
     <div class="error">
