@@ -45,9 +45,9 @@ export const vertexShader = `
 export function createProgramFromSources(
   gl: WebGLRenderingContext,
   shaderSources: string[],
-  opt_attribs: string[],
-  opt_locations: number[],
-  opt_errorCallback: CallableFunction
+  opt_attribs?: string[],
+  opt_locations?: number[],
+  opt_errorCallback?: CallableFunction
 ) {
   const shaders = [];
   for (let ii = 0; ii < shaderSources.length; ++ii) {
