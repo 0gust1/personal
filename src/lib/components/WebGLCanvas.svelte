@@ -6,8 +6,10 @@
   export let scale = 1;
   export let xscrollPerc = 0;
   export let yscrollPerc = 0;
-
-  export let fragShader = `
+  export let webglVersion = 1;
+  export let vertexShaders: string[] = [];
+  export let fragShaders = [
+    `
 		precision highp float;
 
 		uniform vec2 u_resolution;
@@ -19,7 +21,8 @@
 		void main() {
 			gl_FragColor = vec4(fract((gl_FragCoord.xy - u_mouse) / u_resolution), fract(u_time), 1);
 		}
-	`;
+	`
+  ];
 
   let time = 0;
   let m = { x: 0, y: 0 };
@@ -38,6 +41,12 @@
 			void main() { gl_Position = a_position; }
 		`;
 
+  const vs2 = `#version 300 es
+      in vec4 a_position;
+
+      void main() { gl_Position = a_position;}
+    `;
+
   onMount(() => {
     if (browser) {
       setupWebGL();
@@ -52,10 +61,11 @@
 
   function setupWebGL() {
     let frame: number;
+    let vtxShaders = vertexShaders.length > 0 ? vertexShaders : [webglVersion === 2 ? vs2 : vs];
 
     if (!(gl = getRenderingContext())) return;
     try {
-      program = createProgramFromSources(gl, [vs, fragShader]) as WebGLProgram; //will be checked later
+      program = createProgramFromSources(gl, [...vtxShaders, ...fragShaders]) as WebGLProgram; //will be checked later
     } catch (err) {
       cleanup(gl);
       error = `WebGL program creation failed. Error log:
@@ -134,7 +144,7 @@
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     gl =
-      canvas.getContext('webgl') ||
+      canvas.getContext(webglVersion === 1 ? 'webgl' : 'webgl2') ||
       (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null);
     if (!gl) {
       error = `gettting webgl context failed. Your browser or device may not support WebGL.`;

@@ -1,12 +1,13 @@
 <script lang="ts">
   import WebGlCanvas from '$lib/components/WebGLCanvas.svelte';
   export let fragShader: string;
+  export let webglVersion = 1;
 
   let shaderCode = fragShader;
 </script>
 
 {#key shaderCode}
-  <WebGlCanvas fragShader={shaderCode} />
+  <WebGlCanvas {webglVersion} fragShaders={[shaderCode]} />
 {/key}
 
 <details>
