@@ -49,7 +49,7 @@
 
   onMount(() => {
     if (browser) {
-      setupWebGL();
+      return setupWebGL();
     }
   });
 
@@ -84,7 +84,6 @@
     }
 
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-
     const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
     const mouseLocation = gl.getUniformLocation(program, 'u_mouse');
     const timeLocation = gl.getUniformLocation(program, 'u_time');
@@ -105,9 +104,13 @@
 
       gl.viewport(0.95, 0, gl.canvas.width, gl.canvas.height);
       gl.useProgram(program);
-      gl.enableVertexAttribArray(positionAttributeLocation);
+      if (positionAttributeLocation !== -1) {
+        gl.enableVertexAttribArray(positionAttributeLocation);
+      }
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      if (positionAttributeLocation !== -1) {
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      }
 
       gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
       gl.uniform2f(mouseLocation, m.x, -m.y);
