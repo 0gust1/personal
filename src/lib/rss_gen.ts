@@ -11,16 +11,16 @@ export const getRSS = (
         <title>${siteTitle}</title>
         <link>${websiteURL}</link>
         <description>${feedDescription ?? siteDescription}</description>
-        <atom:link href="${feedURL}" rel="self" type="application/rss+xml" />
+        <atom:link href="${websiteURL}${feedURL}" rel="self" type="application/rss+xml" />
         ${contentCollection
           .map(
             (post) =>
               `
               <item>
-                <guid>${post.contentURL}</guid>
+                <guid>${websiteURL}${post.contentURL}</guid>
                 <title>${post.title}</title>
                 ${post.description ? `<description>${post.description}</description>` : ''}
-                <link>${post.contentURL}</link>
+                <link>${websiteURL}${post.contentURL}</link>
                 <pubDate>${new Date(post.date).toUTCString()}</pubDate>
             </item>
           `
