@@ -138,7 +138,7 @@ export const getAllContent = async () => {
   if (!allContentMetadata || allContentMetadata.length === 0) {
     await loadAllContent();
   }
-  console.log(allContentComponentResolvers);
+  //console.log(allContentComponentResolvers);
   return allContentMetadata;
 };
 
