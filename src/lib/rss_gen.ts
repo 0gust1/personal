@@ -20,7 +20,7 @@ export const getRSS = (
                 <guid>${post.contentURL}</guid>
                 <title>${post.title}</title>
                 ${post.description ? `<description>${post.description}</description>` : ''}
-                <link>${post.contentURL}}</link>
+                <link>${post.contentURL}</link>
                 <pubDate>${new Date(post.date).toUTCString()}</pubDate>
             </item>
           `
