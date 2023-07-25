@@ -15,11 +15,10 @@
   tags={data.frontmatter.tags}
 />
 
-<article class=" mx-auto">
-  <ArticleDescription description={data.frontmatter.description} tags={data.frontmatter.tags} />
+<article class="prose prose-stone dark:prose-invert mx-auto" lang={data.frontmatter.lang ?? 'en'}>
+  <ArticleMeta date={data.frontmatter.date} updated_at={data.frontmatter.updated_at ?? null} />
   <ArticleTitle title={data.frontmatter.title} />
-  <ArticleMeta date={data.frontmatter.date} />
-  <div class="prose prose-stone dark:prose-invert">
-    <svelte:component this={component} />
-  </div>
+  <ArticleDescription description={data.frontmatter.description} tags={data.frontmatter.tags} />
+
+  <svelte:component this={component} />
 </article>
