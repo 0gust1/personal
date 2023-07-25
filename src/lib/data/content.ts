@@ -157,12 +157,12 @@ export const getContentByUrl = async (url: string) => {
 
   const post = await match?.resolver?.();
 
-  if (!post || (!post.metadata.published && !dev)) {
-    return null;
-  } else {
+  if ((post && post.metadata.published) || (post && dev)) {
     return {
       component: post.default,
       frontmatter: post.metadata
     };
+  } else {
+    return null;
   }
 };
