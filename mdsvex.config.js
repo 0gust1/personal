@@ -2,6 +2,7 @@ import { defineMDSveXConfig as defineConfig } from 'mdsvex';
 
 import remarkGemoji from 'remark-gemoji';
 import relativeImages from 'mdsvex-relative-images';
+import remarkUnwrapImages from 'remark-unwrap-images';
 import remarkHeadings from '@vcarl/remark-headings';
 import remarkGfm from 'remark-gfm';
 import remarkToc from 'remark-toc';
@@ -16,7 +17,14 @@ const config = defineConfig({
     dashes: 'oldschool'
   },
 
-  remarkPlugins: [relativeImages, remarkGfm, headings, remarkGemoji, [remarkToc, { tight: true }]],
+  remarkPlugins: [
+    relativeImages,
+    remarkUnwrapImages,
+    remarkGfm,
+    headings,
+    remarkGemoji,
+    [remarkToc, { tight: true }]
+  ],
   rehypePlugins: [
     rehypeAccessibleEmojis,
     slugPlugin,
