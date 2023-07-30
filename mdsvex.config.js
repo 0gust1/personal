@@ -16,7 +16,7 @@ const config = defineConfig({
     dashes: 'oldschool'
   },
 
-  remarkPlugins: [relativeImages, remarkGfm, headings, remarkGemoji, remarkToc],
+  remarkPlugins: [relativeImages, remarkGfm, headings, remarkGemoji, [remarkToc, { tight: true }]],
   rehypePlugins: [
     rehypeAccessibleEmojis,
     slugPlugin,
