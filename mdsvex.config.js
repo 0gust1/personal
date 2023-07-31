@@ -2,6 +2,7 @@ import { defineMDSveXConfig as defineConfig } from 'mdsvex';
 
 import remarkGemoji from 'remark-gemoji';
 import relativeImages from 'mdsvex-relative-images';
+import remarkFigureCaption from '@microflash/remark-figure-caption';
 import remarkUnwrapImages from 'remark-unwrap-images';
 import remarkHeadings from '@vcarl/remark-headings';
 import remarkGfm from 'remark-gfm';
@@ -20,6 +21,7 @@ const config = defineConfig({
   remarkPlugins: [
     relativeImages,
     remarkUnwrapImages,
+    remarkFigureCaption,
     remarkGfm,
     headings,
     remarkGemoji,
