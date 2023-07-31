@@ -1,17 +1,24 @@
 ---
 title: 'How this website is built'
 date: '2023-05-08'
+updated_at: '2023-07-30'
 tags: ['sveltekit', 'web', 'code']
 published: true
 ---
 
 This website is built using [SvelteKit](https://kit.svelte.dev/), a framework for building web applications of all sizes.
 
-The requirements were:
+The requirements are:
 
 - static website: no server runtime needed
 - content is written in markdown
 - RSS feeds are great, RSS is not dead
+
+## Perfectionism kills / better done than perfect
+
+I can't count the number of times I coded static web generators (professionally or not). This time, having much less time than before, I wanted to avoid the perfectionism trap, and focus publishing and content. 
+
+As a side effect, expect some broken and ugly things sometimes. Everyhting will be done iteratively.
 
 ## How the build works
 
