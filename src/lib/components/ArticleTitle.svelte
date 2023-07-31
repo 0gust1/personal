@@ -1,37 +1,23 @@
 <script lang="ts">
-  export let slug = '';
   export let title: string;
   const id = title
     .toLowerCase()
     .replace(/[^a-zA-Z ]/g, '')
     .replace(/\s/g, '-');
-  const href = slug ? `/posts/${slug}` : '#' + id;
+  const href = '#' + id;
 </script>
 
-<h1 class="heading" class:large={!slug} {id}>
+<h1 class="heading" {id}>
   <a {href}>
     {title}
   </a>
 </h1>
 
-<!-- {#if slug}
-  <h3 class="heading" class:large={!slug} {id}>
-    <a {href}>
-      {title}
-    </a>
-  </h3>
-{:else}
-  <h2 class="heading" class:large={!slug} {id}>
-    <a {href}>
-      {title}
-    </a>
-  </h2>
-{/if} -->
-
 <style lang="postcss">
   h1 {
-    @apply font-didone;
+    @apply font-didone text-3xl;
   }
   h1 a {
+    text-decoration: none;
   }
 </style>
