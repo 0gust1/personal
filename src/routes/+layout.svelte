@@ -65,7 +65,10 @@
 
 <footer class="site-footer">
   <p>
-    &#169; 0gust1, {new Date().getFullYear()}
+    &#169; 0gust1, {new Date().getFullYear()} —
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license external"
+      >BY-NC-SA 4.0</a
+    >
   </p>
 </footer>
 
