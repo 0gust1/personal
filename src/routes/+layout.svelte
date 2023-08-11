@@ -1,7 +1,6 @@
 <script lang="ts">
   import '../app.postcss';
-  import MoonIcon from 'heroicons-svelte/solid/MoonIcon.svelte';
-  import SunIcon from 'heroicons-svelte/solid/SunIcon.svelte';
+  import {MoonIcon, SunIcon} from 'heroicons-svelte/24/solid';
   import { browser } from '$app/environment';
   import '$lib/code-highlight-styles.css';
 
