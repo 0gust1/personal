@@ -18,7 +18,7 @@ export const load = async ({ params, url }) => {
   // const post = await match?.resolver?.();
 
   if (!post) {
-    throw error(404); // Couldn't resolve the post
+    error(404); // Couldn't resolve the post
   }
 
   return post;
