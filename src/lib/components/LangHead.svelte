@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let lang = 'en';
+	export let lang = 'en';
 </script>
 
 <svelte:head>
-  <html {lang} />
+	<html {lang} />
 </svelte:head>

@@ -16,7 +16,7 @@ The requirements are:
 
 ## Perfectionism kills / better done than perfect
 
-I can't count the number of times I coded static web generators (professionally or not). This time, having much less time than before, I wanted to avoid the perfectionism trap, and focus publishing and content. 
+I can't count the number of times I coded static web generators (professionally or not). This time, having much less time than before, I wanted to avoid the perfectionism trap, and focus publishing and content.
 
 As a side effect, expect some broken and ugly things sometimes. Everyhting will be done iteratively.
 

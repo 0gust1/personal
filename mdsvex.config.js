@@ -12,52 +12,52 @@ import slugPlugin from 'rehype-slug';
 import rehypeAccessibleEmojis from 'rehype-accessible-emojis';
 
 const config = defineConfig({
-  extensions: ['.svelte.md', '.md', '.svx'],
+	extensions: ['.svelte.md', '.md', '.svx'],
 
-  smartypants: {
-    dashes: 'oldschool'
-  },
+	smartypants: {
+		dashes: 'oldschool'
+	},
 
-  remarkPlugins: [
-    relativeImages,
-    remarkUnwrapImages,
-    remarkFigureCaption,
-    remarkGfm,
-    headings,
-    remarkGemoji,
-    [remarkToc, { tight: true }]
-  ],
-  rehypePlugins: [
-    rehypeAccessibleEmojis,
-    slugPlugin,
-    [
-      autolinkHeadings,
-      {
-        behavior: 'wrap'
-      }
-    ]
-  ]
+	remarkPlugins: [
+		relativeImages,
+		remarkUnwrapImages,
+		remarkFigureCaption,
+		remarkGfm,
+		headings,
+		remarkGemoji,
+		[remarkToc, { tight: true }]
+	],
+	rehypePlugins: [
+		rehypeAccessibleEmojis,
+		slugPlugin,
+		[
+			autolinkHeadings,
+			{
+				behavior: 'wrap'
+			}
+		]
+	]
 });
 
 /**
  * Parses headings and includes the result in metadata
  */
 function headings() {
-  return function transformer(tree, vfile) {
-    // run remark-headings plugin
-    remarkHeadings()(tree, vfile);
+	return function transformer(tree, vfile) {
+		// run remark-headings plugin
+		remarkHeadings()(tree, vfile);
 
-    // include the headings data in mdsvex frontmatter
-    vfile.data.fm ??= {};
-    vfile.data.fm.headings = vfile.data.headings.map((heading) => ({
-      ...heading,
-      // slugify heading.value
-      id: heading.value
-        .toLowerCase()
-        .replace(/\s/g, '-')
-        .replace(/[^a-z0-9-]/g, '')
-    }));
-  };
+		// include the headings data in mdsvex frontmatter
+		vfile.data.fm ??= {};
+		vfile.data.fm.headings = vfile.data.headings.map((heading) => ({
+			...heading,
+			// slugify heading.value
+			id: heading.value
+				.toLowerCase()
+				.replace(/\s/g, '-')
+				.replace(/[^a-z0-9-]/g, '')
+		}));
+	};
 }
 
 export default config;

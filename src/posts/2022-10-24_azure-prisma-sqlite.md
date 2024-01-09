@@ -106,10 +106,10 @@ You can use a simple shell script for this, that you can launch before app start
 
 ```json
 {
-  "scripts": {
-    "prestart": "sh azure_database_migrate.sh",
-    "start": "node node-dist/index.js"
-  }
+	"scripts": {
+		"prestart": "sh azure_database_migrate.sh",
+		"start": "node node-dist/index.js"
+	}
 }
 ```
 

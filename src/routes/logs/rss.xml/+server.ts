@@ -10,12 +10,12 @@ export const prerender = true;
 const logsContentCollection = await getAllContentOfType('logs');
 
 export async function GET({ setHeaders }) {
-  setHeaders({
-    'Cache-Control': `max-age=0, s-max-age=600`,
-    'Content-Type': 'application/xml'
-  });
+	setHeaders({
+		'Cache-Control': `max-age=0, s-max-age=600`,
+		'Content-Type': 'application/xml'
+	});
 
-  const xml = getRSS(logsContentCollection, '/logs/rss.xml', `${siteDescription} - all logs`);
+	const xml = getRSS(logsContentCollection, '/logs/rss.xml', `${siteDescription} - all logs`);
 
-  return new Response(xml);
+	return new Response(xml);
 }
