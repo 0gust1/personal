@@ -14,12 +14,12 @@ const getPostUrl = (slug: string) => `${websiteURL}/posts/${slug}`;
  * @type {import('@sveltejs/kit').RequestHandler}
  */
 export async function GET({ setHeaders }) {
-  setHeaders({
-    'Cache-Control': `max-age=0, s-max-age=600`,
-    'Content-Type': 'application/xml'
-  });
+	setHeaders({
+		'Cache-Control': `max-age=0, s-max-age=600`,
+		'Content-Type': 'application/xml'
+	});
 
-  const xml = `<?xml version="1.0" encoding="UTF-8" ?>
+	const xml = `<?xml version="1.0" encoding="UTF-8" ?>
     <urlset
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
@@ -37,22 +37,22 @@ export async function GET({ setHeaders }) {
       </url>
 
       ${posts
-        .map(
-          (post) => `<url>
+				.map(
+					(post) => `<url>
             <loc>${getPostUrl(post.slug)}</loc>
             <lastmod
               >${
-                post.updated_at
-                  ? new Date(post.updated_at).toISOString()
-                  : new Date(post.date).toISOString()
-              }</lastmod
+								post.updated_at
+									? new Date(post.updated_at).toISOString()
+									: new Date(post.date).toISOString()
+							}</lastmod
             >
             <changefreq>monthly</changefreq>
             <priority>1.0</priority>
           </url>`
-        )
-        .join('')}
+				)
+				.join('')}
     </urlset>`;
 
-  return new Response(xml);
+	return new Response(xml);
 }

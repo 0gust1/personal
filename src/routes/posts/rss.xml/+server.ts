@@ -13,12 +13,12 @@ const blogPostsCollection = await getAllContentOfType('posts');
  * @type {import('@sveltejs/kit').RequestHandler}
  */
 export async function GET({ setHeaders }) {
-  setHeaders({
-    'Cache-Control': `max-age=0, s-max-age=600`,
-    'Content-Type': 'application/xml'
-  });
+	setHeaders({
+		'Cache-Control': `max-age=0, s-max-age=600`,
+		'Content-Type': 'application/xml'
+	});
 
-  const xml = getRSS(blogPostsCollection, '/posts/rss.xml', `${siteDescription} - all blog posts`);
+	const xml = getRSS(blogPostsCollection, '/posts/rss.xml', `${siteDescription} - all blog posts`);
 
-  return new Response(xml);
+	return new Response(xml);
 }

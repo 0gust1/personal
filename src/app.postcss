@@ -4,61 +4,61 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-cosmiclatte-50 dark:bg-eigengrau-900;
-    @apply text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
-  }
+	body {
+		@apply bg-cosmiclatte-50 dark:bg-eigengrau-900;
+		@apply text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
+	}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
-  }
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
+	}
 
-  hr {
-    @apply border-eigengrau-400 dark:border-cosmiclatte-700;
-  }
+	hr {
+		@apply border-eigengrau-400 dark:border-cosmiclatte-700;
+	}
 
-  details {
-    @apply cursor-pointer;
-  }
+	details {
+		@apply cursor-pointer;
+	}
 
-  a,
-  .prose a {
-    @apply underline underline-offset-4 decoration-1 decoration-dotted decoration-eigengrau-900/30 dark:decoration-cosmiclatte-50/50 font-normal text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
-  }
-  .prose h1 a[href^='#'],
-  .prose h2 a[href^='#'],
-  .prose h3 a[href^='#'],
-  .prose h4 a[href^='#'],
-  .prose h5 a[href^='#'],
-  .prose h6 a[href^='#'] {
-    @apply no-underline;
-  }
-  .prose h1 a[href^='#']::before,
-  .prose h2 a[href^='#']::before,
-  .prose h3 a[href^='#']::before,
-  .prose h4 a[href^='#']::before,
-  .prose h5 a[href^='#']::before,
-  .prose h6 a[href^='#']::before {
-    content: '#';
-    @apply text-eigengrau-900 text-opacity-30 dark:text-cosmiclatte-50 dark:text-opacity-30;
-    @apply inline-block -ml-5 mr-1;
-    visibility: hidden;
-  }
-  .prose h1:hover a[href^='#']:hover::before,
-  .prose h2:hover a[href^='#']:hover::before,
-  .prose h3:hover a[href^='#']:hover::before,
-  .prose h4:hover a[href^='#']:hover::before,
-  .prose h5:hover a[href^='#']:hover::before,
-  .prose h6:hover a[href^='#']:hover::before {
-    visibility: visible;
-  }
-  /* :not([href^='#']) */
-  .prose textarea {
-    @apply bg-eigengrau-100 dark:bg-cosmiclatte-600 dark:bg-opacity-50;
-  }
+	a,
+	.prose a {
+		@apply underline underline-offset-4 decoration-1 decoration-dotted decoration-eigengrau-900/30 dark:decoration-cosmiclatte-50/50 font-normal text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
+	}
+	.prose h1 a[href^='#'],
+	.prose h2 a[href^='#'],
+	.prose h3 a[href^='#'],
+	.prose h4 a[href^='#'],
+	.prose h5 a[href^='#'],
+	.prose h6 a[href^='#'] {
+		@apply no-underline;
+	}
+	.prose h1 a[href^='#']::before,
+	.prose h2 a[href^='#']::before,
+	.prose h3 a[href^='#']::before,
+	.prose h4 a[href^='#']::before,
+	.prose h5 a[href^='#']::before,
+	.prose h6 a[href^='#']::before {
+		content: '#';
+		@apply text-eigengrau-900 text-opacity-30 dark:text-cosmiclatte-50 dark:text-opacity-30;
+		@apply inline-block -ml-5 mr-1;
+		visibility: hidden;
+	}
+	.prose h1:hover a[href^='#']:hover::before,
+	.prose h2:hover a[href^='#']:hover::before,
+	.prose h3:hover a[href^='#']:hover::before,
+	.prose h4:hover a[href^='#']:hover::before,
+	.prose h5:hover a[href^='#']:hover::before,
+	.prose h6:hover a[href^='#']:hover::before {
+		visibility: visible;
+	}
+	/* :not([href^='#']) */
+	.prose textarea {
+		@apply bg-eigengrau-100 dark:bg-cosmiclatte-600 dark:bg-opacity-50;
+	}
 }

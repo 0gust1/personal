@@ -16,11 +16,11 @@ const websiteDescription = `${siteDescription}`;
  * @type {import('@sveltejs/kit').RequestHandler}
  */
 export async function GET({ setHeaders }) {
-  setHeaders({
-    'Cache-Control': `max-age=0, s-max-age=600`,
-    'Content-Type': 'application/xml'
-  });
+	setHeaders({
+		'Cache-Control': `max-age=0, s-max-age=600`,
+		'Content-Type': 'application/xml'
+	});
 
-  const xml = getRSS(allContentCollection, '/rss.xml', `${websiteDescription} - all content`);
-  return new Response(xml);
+	const xml = getRSS(allContentCollection, '/rss.xml', `${websiteDescription} - all content`);
+	return new Response(xml);
 }

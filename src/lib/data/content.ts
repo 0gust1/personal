@@ -9,8 +9,8 @@ let allContentMetadata: App.BlogPost[] = [];
 let allContentComponentResolvers: Record<string, App.MdsvexResolver> = {};
 
 const postTypeFromPath = (path: string) => {
-  const type = path.match(/\/src\/(\w+)\//i)?.[1] ?? null;
-  return type;
+	const type = path.match(/\/src\/(\w+)\//i)?.[1] ?? null;
+	return type;
 };
 
 /**
@@ -27,10 +27,10 @@ const postTypeFromPath = (path: string) => {
 // };
 
 const getAllContentFromSource = async () => {
-  return import.meta.glob([
-    '/src/posts/**/*.{md,svx,svelte.md}',
-    '/src/logs/**/*.{md,svx,svelte.md}'
-  ]) as unknown as Promise<Record<string, App.MdsvexResolver>>;
+	return import.meta.glob([
+		'/src/posts/**/*.{md,svx,svelte.md}',
+		'/src/logs/**/*.{md,svx,svelte.md}'
+	]) as unknown as Promise<Record<string, App.MdsvexResolver>>;
 };
 
 /**
@@ -39,28 +39,28 @@ const getAllContentFromSource = async () => {
  * @returns
  */
 const contentMetadataFromModules = (modules: Record<string, () => Promise<unknown>>) => {
-  return Object.entries(modules).map(([path, resolver]) =>
-    resolver().then(
-      (post) =>
-        ({
-          type: postTypeFromPath(path),
-          slug: slugFromPath(path),
-          originalContentPath: path,
-          contentURL: `${base}${urlFromPath(path)}`,
-          ...(post as unknown as App.MdsvexFile).metadata
-        } as App.BlogPost)
-    )
-  );
+	return Object.entries(modules).map(([path, resolver]) =>
+		resolver().then(
+			(post) =>
+				({
+					type: postTypeFromPath(path),
+					slug: slugFromPath(path),
+					originalContentPath: path,
+					contentURL: `${base}${urlFromPath(path)}`,
+					...(post as unknown as App.MdsvexFile).metadata
+				}) as App.BlogPost
+		)
+	);
 };
 
 export const getPublishedContentMetadata = async (
-  contentModulesPromises: Record<string, App.MdsvexResolver>
+	contentModulesPromises: Record<string, App.MdsvexResolver>
 ) => {
-  const contentPromises = contentMetadataFromModules(await contentModulesPromises);
-  const content = await Promise.all(contentPromises);
-  const publishedContent = content.filter((post) => (dev ? true : post.published));
-  publishedContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
-  return publishedContent;
+	const contentPromises = contentMetadataFromModules(await contentModulesPromises);
+	const content = await Promise.all(contentPromises);
+	const publishedContent = content.filter((post) => (dev ? true : post.published));
+	publishedContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
+	return publishedContent;
 };
 
 // export const getPosts = async () => {
@@ -100,69 +100,72 @@ export const getPublishedContentMetadata = async (
 // };
 
 export const getAllContentMetadata = async () => {
-  if (!allContentMetadata || allContentMetadata.length === 0) {
-    await loadAllContent();
-  }
-  const tags = allContentMetadata.reduce((acc, content) => {
-    const contentTags = content.tags || [];
-    // check if one of the contenttTag is already in the accumulator
-    contentTags.forEach((contentTag) => {
-      if (acc.some((tagAcc) => tagAcc.tag === contentTag)) {
-        acc.find((tagAcc) => tagAcc.tag === contentTag).count++;
-      } else {
-        acc.push({ tag: contentTag, count: 1 });
-      }
-    });
+	if (!allContentMetadata || allContentMetadata.length === 0) {
+		await loadAllContent();
+	}
+	const tags = allContentMetadata.reduce(
+		(acc, content) => {
+			const contentTags = content.tags || [];
+			// check if one of the contenttTag is already in the accumulator
+			contentTags.forEach((contentTag) => {
+				if (acc.some((tagAcc) => tagAcc.tag === contentTag)) {
+					acc.find((tagAcc) => tagAcc.tag === contentTag).count++;
+				} else {
+					acc.push({ tag: contentTag, count: 1 });
+				}
+			});
 
-    return acc;
-  }, [] as { tag: string; count: number }[]);
+			return acc;
+		},
+		[] as { tag: string; count: number }[]
+	);
 
-  return { tags, meta: { total: allContentMetadata.length } };
+	return { tags, meta: { total: allContentMetadata.length } };
 };
 
 ///-----
 
 const loadAllContent = async () => {
-  allContentComponentResolvers = await getAllContentFromSource();
-  allContentMetadata = await getPublishedContentMetadata(allContentComponentResolvers);
+	allContentComponentResolvers = await getAllContentFromSource();
+	allContentMetadata = await getPublishedContentMetadata(allContentComponentResolvers);
 };
 
 export const getAllContentOfType = async (type: 'posts' | 'logs') => {
-  if (!allContentMetadata || allContentMetadata.length === 0) {
-    await loadAllContent();
-  }
-  return allContentMetadata.filter((content) => content.type === type);
+	if (!allContentMetadata || allContentMetadata.length === 0) {
+		await loadAllContent();
+	}
+	return allContentMetadata.filter((content) => content.type === type);
 };
 
 export const getAllContent = async () => {
-  if (!allContentMetadata || allContentMetadata.length === 0) {
-    await loadAllContent();
-  }
-  //console.log(allContentComponentResolvers);
-  return allContentMetadata;
+	if (!allContentMetadata || allContentMetadata.length === 0) {
+		await loadAllContent();
+	}
+	//console.log(allContentComponentResolvers);
+	return allContentMetadata;
 };
 
 export const getContentByUrl = async (url: string) => {
-  if (!allContentComponentResolvers || Object.keys(allContentComponentResolvers).length === 0) {
-    await loadAllContent();
-  }
+	if (!allContentComponentResolvers || Object.keys(allContentComponentResolvers).length === 0) {
+		await loadAllContent();
+	}
 
-  let match: { path?: string; resolver?: App.MdsvexResolver } = {};
-  for (const [path, resolver] of Object.entries(allContentComponentResolvers)) {
-    if (urlFromPath(path) === url) {
-      match = { path, resolver: resolver as unknown as App.MdsvexResolver };
-      break;
-    }
-  }
+	let match: { path?: string; resolver?: App.MdsvexResolver } = {};
+	for (const [path, resolver] of Object.entries(allContentComponentResolvers)) {
+		if (urlFromPath(path) === url) {
+			match = { path, resolver: resolver as unknown as App.MdsvexResolver };
+			break;
+		}
+	}
 
-  const post = await match?.resolver?.();
+	const post = await match?.resolver?.();
 
-  if ((post && post.metadata.published) || (post && dev)) {
-    return {
-      component: post.default,
-      frontmatter: post.metadata
-    };
-  } else {
-    return null;
-  }
+	if ((post && post.metadata.published) || (post && dev)) {
+		return {
+			component: post.default,
+			frontmatter: post.metadata
+		};
+	} else {
+		return null;
+	}
 };
