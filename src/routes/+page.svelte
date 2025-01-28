@@ -7,7 +7,12 @@
 	import ArticleMeta from '$lib/components/ArticleMeta.svelte';
 	import ArticleDescription from '$lib/components/ArticleDescription.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+		children?: import('svelte').Snippet;
+	}
+
+	let { data, children }: Props = $props();
 
 	const locale = 'fr';
 </script>
@@ -65,7 +70,7 @@
 	<ul class="topics-list">
 		{#each data.tagsInfo.tags as tagAcc}
 			<li>
-				<span>{tagAcc.tag}({tagAcc.count})</span>
+				<span>{tagAcc.tag} <span class="text-xs">({tagAcc.count})</span></span>
 			</li>
 		{/each}
 	</ul>
@@ -73,7 +78,7 @@
 {#if dev}
 	<Debug {data} />
 {/if}
-<slot />
+{@render children?.()}
 
 <style lang="postcss">
 	h2 {

@@ -3,8 +3,13 @@
 	import { MoonIcon, SunIcon } from 'heroicons-svelte/24/solid';
 	import { browser } from '$app/environment';
 	import '$lib/code-highlight-styles.css';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
 
-	let isDarkMode = browser ? Boolean(document.documentElement.classList.contains('dark')) : true;
+	let { children }: Props = $props();
+
+	let isDarkMode = $state(browser ? Boolean(document.documentElement.classList.contains('dark')) : true);
 </script>
 
 <svelte:head>
@@ -40,7 +45,7 @@
 		aria-label="Toggle Dark Mode"
 		aria-checked={isDarkMode}
 		class="w-5 h-5 sm:h-8 sm:w-8 sm:p-1"
-		on:click={() => {
+		onclick={() => {
 			isDarkMode = !isDarkMode;
 			localStorage.setItem('lightTheme', isDarkMode ? 'dark' : 'light');
 
@@ -59,7 +64,7 @@
 </header>
 
 <main class="site-main container">
-	<slot />
+	{@render children?.()}
 </main>
 
 <footer class="site-footer">
@@ -75,7 +80,6 @@
 	.site-header {
 		@apply px-2 py-2 mb-12;
 		@apply flex items-center justify-between;
-		/* @apply bg-stone-500 bg-opacity-50; */
 	}
 	.site-header a {
 		@apply text-stone-700;

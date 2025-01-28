@@ -3,12 +3,22 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { createProgramFromSources } from '$lib/webgl-utils';
 
-	export let scale = 1;
-	export let xscrollPerc = 0;
-	export let yscrollPerc = 0;
-	export let webglVersion = 1;
-	export let vertexShaders: string[] = [];
-	export let fragShaders = [
+	interface Props {
+		scale?: number;
+		xscrollPerc?: number;
+		yscrollPerc?: number;
+		webglVersion?: number;
+		vertexShaders?: string[];
+		fragShaders?: any;
+	}
+
+	let {
+		scale = 1,
+		xscrollPerc = 0,
+		yscrollPerc = 0,
+		webglVersion = 1,
+		vertexShaders = [],
+		fragShaders = [
 		`
 		precision highp float;
 
@@ -22,19 +32,20 @@
 			gl_FragColor = vec4(fract((gl_FragCoord.xy - u_mouse) / u_resolution), fract(u_time), 1);
 		}
 	`
-	];
+	]
+	}: Props = $props();
 
 	let time = 0;
 	let m = { x: 0, y: 0 };
 	let canvasWidth: number;
 	let canvasHeight: number;
-	let clientWidth: number;
-	let clientHeight: number;
+	let clientWidth: number = $state();
+	let clientHeight: number = $state();
 	let gl: WebGLRenderingContext | null;
 	let program: WebGLProgram | null;
 	let positionBuffer: WebGLBuffer | null;
-	let canvas: HTMLCanvasElement;
-	let error: string;
+	let canvas: HTMLCanvasElement = $state();
+	let error: string = $state();
 
 	const vs = `
 			attribute vec4 a_position;
@@ -160,8 +171,8 @@
 	}
 </script>
 
-<div class="canvas_container" on:mousemove={handleMousemove} bind:clientWidth bind:clientHeight>
-	<canvas class="" bind:this={canvas} width={canvasWidth} height={canvasHeight} />
+<div class="canvas_container" onmousemove={handleMousemove} bind:clientWidth bind:clientHeight>
+	<canvas class="" bind:this={canvas} width={canvasWidth} height={canvasHeight}></canvas>
 	{#if error}
 		<div class="error">
 			<p class="font-bold">Problem compiling the WebGL program:</p>

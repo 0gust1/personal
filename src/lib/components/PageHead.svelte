@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { siteTitle } from '$lib/config';
-	export let title: string;
-	export let description: string;
-	export let tags: string[] = [];
+	interface Props {
+		title: string;
+		description: string;
+		tags?: string[];
+	}
+
+	let { title, description, tags = [] }: Props = $props();
 	const formattedTitle = title ? `${title} | ${siteTitle}` : siteTitle;
 </script>
 
