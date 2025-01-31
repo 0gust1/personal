@@ -19,16 +19,16 @@
 		find me elsewhere:
 		<ul>
 			<li>
-				<a href="https://twitter.com/0gust1" class="cancel">twitter</a>
+				<a href="https://merveilles.town/@0gust1">merveilles.town</a>
+			</li>
+			<li>
+				<a href="https://github.com/0gust1">github</a>
 			</li>
 			<li>
 				<a href="https://bsky.app/profile/0gust1.bsky.social">bluesky</a>
 			</li>
 			<li>
-				<a href="https://merveilles.town/@0gust1">merveilles.town</a>
-			</li>
-			<li>
-				<a href="https://github.com/0gust1">github</a>
+				<a href="https://twitter.com/0gust1" class="cancel">twitter</a>
 			</li>
 		</ul>
 	</div>

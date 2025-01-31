@@ -118,7 +118,7 @@ export const getAllContentMetadata = async () => {
 			return acc;
 		},
 		[] as { tag: string; count: number }[]
-	);
+	).sort((a, b) => (a.count < b.count ? 1 : -1));
 
 	return { tags, meta: { total: allContentMetadata.length } };
 };
