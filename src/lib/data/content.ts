@@ -57,8 +57,8 @@ export const getPublishedContentMetadata = async (
 	contentModulesPromises: Record<string, App.MdsvexResolver>
 ) => {
 	const contentPromises = contentMetadataFromModules(await contentModulesPromises);
-	const content = await Promise.all(contentPromises);
-	const publishedContent = content.filter((post) => (dev ? true : post.published));
+	const all_content = await Promise.all(contentPromises);
+	const publishedContent = all_content.filter((content) => (dev ? true : content.published));
 	publishedContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
 	return publishedContent;
 };
@@ -144,6 +144,13 @@ export const getAllContent = async () => {
 	//console.log(allContentComponentResolvers);
 	return allContentMetadata;
 };
+
+export const getContentByTopic = async (topic: string) => {
+	if (!allContentMetadata || allContentMetadata.length === 0) {
+		await loadAllContent();
+	}
+	return allContentMetadata.filter((content) => content.tags?.includes(topic));
+}
 
 export const getContentByUrl = async (url: string) => {
 	if (!allContentComponentResolvers || Object.keys(allContentComponentResolvers).length === 0) {

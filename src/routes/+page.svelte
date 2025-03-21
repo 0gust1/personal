@@ -5,7 +5,7 @@
 	import Cartridge from './cartridge.svelte';
 	import PageHead from '$lib/components/PageHead.svelte';
 	import ArticleMeta from '$lib/components/ArticleMeta.svelte';
-	import ArticleDescription from '$lib/components/ArticleDescription.svelte';
+	import ContentList from '$lib/components/ContentList.svelte';
 
 	interface Props {
 		data: PageData;
@@ -29,55 +29,11 @@
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 	<div>
 		<h2>Logs</h2>
-		<div class="posts-list">
-			{#each data.logs as { slug, title, description, date, tags, updated_at }}
-				{@const formattedDate = new Date(date).toLocaleDateString(locale)}
-				{@const formattedUpdatedDate = updated_at
-					? new Date(updated_at).toLocaleDateString(locale)
-					: null}
-				<article>
-					<div class="order-2 grow">
-						<h3>
-							<a href="/logs/{slug}">{title}</a>
-						</h3>
-						<ArticleDescription {description} {slug} {tags} />
-					</div>
-					<div class="order-1">
-						<span>
-							<time class="date" datetime={date}>{formattedDate ?? ''}</time>
-						</span>
-						<!-- {#if updated_at}
-          <span class="ml-2 text-xs">
-            (updated:
-            <time class="date">{new Date(updated_at).toLocaleDateString(locale)}</time>
-            )
-          </span>
-        {/if} -->
-					</div>
-				</article>
-			{/each}
-		</div>
+		<ContentList items={data.logs} type="logs" {locale} />
 	</div>
 	<div>
 		<h2>Posts</h2>
-		<div class="posts-list">
-			{#each data.posts as { slug, title, description, date, tags }}
-				{@const formattedDate = new Date(date).toLocaleDateString(locale)}
-				<article class="">
-					<div class="order-2">
-						<h3 class="">
-							<a href="/posts/{slug}">{title}</a>
-						</h3>
-						<ArticleDescription {description} {slug} {tags} />
-					</div>
-					<div class="order-1">
-						<span>
-							<time class="date" datetime={date}>{formattedDate ?? ''}</time>
-						</span>
-					</div>
-				</article>
-			{/each}
-		</div>
+		<ContentList items={data.posts} type="posts" {locale} />
 	</div>
 	<div class="col-span-1 md:col-span-2 xl:col-span-1">
 		<h2 class="topics">Topics</h2>
@@ -89,14 +45,14 @@
 							tagAcc.count
 						)}"
 					>
-						<span class="">
+						<a href="/topics/{encodeURIComponent(tagAcc.tag)}" class="">
 							{tagAcc.tag}
 							{#if tagAcc.count > 1}
 								<span class="tag-count">
 									({tagAcc.count})
 								</span>
 							{/if}
-						</span>
+						</a>
 					</li>
 				{/each}
 			</ul>
@@ -121,12 +77,12 @@
 	}
 
 	.date {
-		@apply text-stone-400 text-[0.55rem] font-mono font-thin tracking-wider;
+		@apply text-stone-400 text-[0.60rem] font-mono font-thin tracking-wider;
 	}
 
 	article {
 		@apply mb-2;
-		@apply grid grid-cols-[auto,1fr] gap-4 items-baseline;
+		@apply grid grid-cols-[auto,1fr] gap-3 items-baseline;
 		h3 {
 			@apply text-sm leading-5 mb-1 font-semibold;
 		}

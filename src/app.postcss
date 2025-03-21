@@ -71,4 +71,33 @@ html{
 	.prose textarea {
 		@apply bg-eigengrau-100 dark:bg-cosmiclatte-600 dark:bg-opacity-50;
 	}
+
+	.prose {
+		.markdown-alert{
+			@apply px-4 py-1 text-sm;
+			@apply bg-yellow-100 dark:bg-yellow-800/50 text-yellow-900 dark:text-yellow-100;
+		}
+		.markdown-alert-title{
+			@apply font-bold text-lg font-didone;
+			svg {@apply inline-block mr-2 fill-green-600;}
+		}
+		
+		.markdown-alert-note{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+			
+		}
+		.markdown-alert-tip{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+		}
+		.markdown-alert-important{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+		}
+		.markdown-alert-warning{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+		}
+		.markdown-alert-caution{
+			.markdown-alert-title svg { @apply fill-red-600; }
+			@apply bg-red-100 dark:bg-red-800/50 text-yellow-900 dark:text-yellow-100;
+		}
+	}
 }
