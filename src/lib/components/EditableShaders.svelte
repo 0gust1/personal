@@ -1,12 +1,16 @@
 <script lang="ts">
 	import WebGlCanvas from '$lib/components/WebGLCanvas.svelte';
-	export let vertexShaders: string[] = [];
-	export let fragShaders: string[];
-	export let webglVersion = 1;
+	interface Props {
+		vertexShaders?: string[];
+		fragShaders: string[];
+		webglVersion?: number;
+	}
 
-	let currShader = 'f0';
+	let { vertexShaders = [], fragShaders, webglVersion = 1 }: Props = $props();
 
-	let allShaders = getShadersDict(vertexShaders, fragShaders);
+	let currShader = $state('f0');
+
+	let allShaders = $state(getShadersDict(vertexShaders, fragShaders));
 
 	function getShadersDict(vertexShaders: string[], fragShaders: string[]) {
 		let shaders = {} as Record<string, string>;
@@ -19,12 +23,12 @@
 		return shaders;
 	}
 
-	$: vtxShaders = Object.entries(allShaders)
+	let vtxShaders = $derived(Object.entries(allShaders)
 		.filter(([k]) => k[0] === 'v')
-		.map(([_, v]) => v);
-	$: frgShaders = Object.entries(allShaders)
+		.map(([_, v]) => v));
+	let frgShaders = $derived(Object.entries(allShaders)
 		.filter(([k]) => k[0] === 'f')
-		.map(([_, v]) => v);
+		.map(([_, v]) => v));
 </script>
 
 {#key allShaders}
@@ -59,7 +63,7 @@
 			</ul>
 		</div>
 		<div class="shader_editor">
-			<textarea bind:value={allShaders[currShader]} class="w-full h-96 p-4 font-mono text-xs" />
+			<textarea bind:value={allShaders[currShader]} class="w-full h-96 p-4 font-mono text-xs"></textarea>
 		</div>
 	</div>
 	<!-- <textarea bind:value={shaderCode} class="w-full h-96 p-4 font-mono text-xs" /> -->

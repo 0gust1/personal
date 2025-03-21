@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html{
+	@apply scroll-smooth
+}
+
 @layer base {
 	body {
 		@apply bg-cosmiclatte-50 dark:bg-eigengrau-900;
@@ -28,7 +32,13 @@
 
 	a,
 	.prose a {
-		@apply underline underline-offset-4 decoration-1 decoration-dotted decoration-eigengrau-900/30 dark:decoration-cosmiclatte-50/50 font-normal text-eigengrau-900 text-opacity-80 dark:text-cosmiclatte-50 dark:text-opacity-80;
+		@apply underline underline-offset-4 decoration-2 decoration-solid 
+		decoration-blue-500/10 hover:decoration-blue-600/50 
+		dark:decoration-blue-100/10 
+		hover:dark:decoration-blue-300/50 hover:decoration-1 font-normal; 
+
+		@apply text-sky-900/80 hover:text-sky-900 dark:text-sky-50/70 hover:dark:text-sky-50/80 dark:text-opacity-70; 
+		/* @apply text-eigengrau-900/80 hover:text-eigengrau-900 dark:text-cosmiclatte-50/70 hover:dark:text-cosmiclatte-50/80 dark:text-opacity-70; */
 	}
 	.prose h1 a[href^='#'],
 	.prose h2 a[href^='#'],
@@ -60,5 +70,34 @@
 	/* :not([href^='#']) */
 	.prose textarea {
 		@apply bg-eigengrau-100 dark:bg-cosmiclatte-600 dark:bg-opacity-50;
+	}
+
+	.prose {
+		.markdown-alert{
+			@apply px-4 py-1 text-sm;
+			@apply bg-yellow-100 dark:bg-yellow-800/50 text-yellow-900 dark:text-yellow-100;
+		}
+		.markdown-alert-title{
+			@apply font-bold text-lg font-didone;
+			svg {@apply inline-block mr-2 fill-green-600;}
+		}
+		
+		.markdown-alert-note{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+			
+		}
+		.markdown-alert-tip{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+		}
+		.markdown-alert-important{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+		}
+		.markdown-alert-warning{
+			.markdown-alert-title svg { @apply fill-blue-600; }
+		}
+		.markdown-alert-caution{
+			.markdown-alert-title svg { @apply fill-red-600; }
+			@apply bg-red-100 dark:bg-red-800/50 text-yellow-900 dark:text-yellow-100;
+		}
 	}
 }

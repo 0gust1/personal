@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let lang = 'en';
+	interface Props {
+		lang?: string;
+	}
+
+	let { lang = 'en' }: Props = $props();
 </script>
 
 <svelte:head>
-	<html {lang} />
+	<html {lang}></html>
 </svelte:head>

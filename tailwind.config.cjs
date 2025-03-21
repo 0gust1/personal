@@ -6,7 +6,7 @@ const config = {
 		extend: {
 			colors: {
 				eigengrau: {
-					50: '#e8e8e8',
+					50: '#e8e8f0',
 					100: '#d0d0d2',
 					200: '#b9b9bb',
 					300: '#a2a2a5',

@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let date: string;
-	export let updated_at: string | null = null;
-	export let locale = 'fr';
+	interface Props {
+		date: string;
+		updated_at?: string | null;
+		locale?: string;
+	}
+
+	let { date, updated_at = null, locale = 'fr' }: Props = $props();
 	const formattedDate = new Date(date).toLocaleDateString(locale);
 </script>
 

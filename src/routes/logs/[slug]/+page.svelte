@@ -1,11 +1,13 @@
 <script lang="ts">
-	import type { SvelteComponentTyped } from 'svelte/internal';
+	// import type { SvelteComponentTyped } from 'svelte/internal';
 	import PageHead from '$lib/components/PageHead.svelte';
 	import ArticleTitle from '$lib/components/ArticleTitle.svelte';
 	import ArticleMeta from '$lib/components/ArticleMeta.svelte';
-	export let data;
+	let { data } = $props();
 	type C = $$Generic<typeof SvelteComponentTyped<any, any, any>>;
-	$: component = data.component as unknown as C;
+	let component = $derived(data.component as unknown as C);
+
+	const SvelteComponent = $derived(component);
 </script>
 
 <PageHead
@@ -28,7 +30,9 @@
 			<ul class="article-tags">
 				{#each data.frontmatter.tags as tag}
 					<li class="">
+						<a href="/topics/{encodeURIComponent(tag)}">
 						<span class="tag">{tag}</span>
+					</a>
 					</li>
 				{/each}
 			</ul>
@@ -36,7 +40,7 @@
 	</div>
 	<hr class="mb-4" />
 	<div class="content prose prose-stone dark:prose-invert">
-		<svelte:component this={component} />
+		<SvelteComponent />
 	</div>
 </article>
 

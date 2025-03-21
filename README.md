@@ -30,3 +30,8 @@ npm ci && npm run dev
 ```bash
 npm ci && npm run build && npm run preview
 ```
+
+## Specifics
+
+Images and image optimization:
+https://kit.svelte.dev/docs/images
