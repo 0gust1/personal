@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import type { SvelteComponentTyped } from 'svelte/internal';
 	import PageHead from '$lib/components/PageHead.svelte';
 	import ArticleTitle from '$lib/components/ArticleTitle.svelte';
 	import ArticleMeta from '$lib/components/ArticleMeta.svelte';
