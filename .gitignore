@@ -14,6 +14,7 @@ vite.config.ts.timestamp-*
 .obsidian
 # this is the root of the obsidian vault
 src/content/
+# src/content/* (uncomment this and comment the previous line if you want to include all content)
 # those are intended to be published
 !src/content/logs/
 !src/content/posts/
