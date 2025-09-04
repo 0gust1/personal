@@ -9,7 +9,7 @@ let allContentMetadata: App.BlogPost[] = [];
 let allContentComponentResolvers: Record<string, App.MdsvexResolver> = {};
 
 const postTypeFromPath = (path: string) => {
-	const type = path.match(/\/src\/(\w+)\//i)?.[1] ?? null;
+	const type = path.match(/\/src\/content\/(\w+)\//i)?.[1] ?? null;
 	return type;
 };
 
@@ -28,8 +28,8 @@ const postTypeFromPath = (path: string) => {
 
 const getAllContentFromSource = async () => {
 	return import.meta.glob([
-		'/src/posts/**/*.{md,svx,svelte.md}',
-		'/src/logs/**/*.{md,svx,svelte.md}'
+		'/src/content/posts/**/*.{md,svx,svelte.md}',
+		'/src/content/logs/**/*.{md,svx,svelte.md}'
 	]) as unknown as Promise<Record<string, App.MdsvexResolver>>;
 };
 
