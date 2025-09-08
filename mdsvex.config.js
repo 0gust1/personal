@@ -1,4 +1,10 @@
 import { defineMDSveXConfig as defineConfig } from 'mdsvex';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /** REMARK plugins - (work on markdown AST) */
 //import plugin from 'remark-github-beta-blockquote-admonitions'
@@ -6,7 +12,7 @@ import { defineMDSveXConfig as defineConfig } from 'mdsvex';
 //import remarkCallouts from '@portaljs/remark-callouts'
 
 // transform and process the images to <picture> with srcset
-import { enhancedImages } from 'mdsvex-enhanced-images';
+// import { enhancedImages } from 'mdsvex-enhanced-images';
 // A remark plugin to add metadata about headings to the parsed output.
 import remarkHeadings from '@vcarl/remark-headings';
 // github flavored markdown
@@ -26,46 +32,46 @@ import autolinkHeadings from 'rehype-autolink-headings';
 import rehypeAccessibleEmojis from 'rehype-accessible-emojis';
 
 const config = defineConfig({
-	extensions: ['.svelte.md', '.md', '.svx'],
-
-	smartypants: {
-		dashes: 'oldschool'
-	},
-
-	remarkPlugins: [enhancedImages, remarkGfm, headings, [remarkToc, { tight: true }]],
-	rehypePlugins: [
-		rehypeAccessibleEmojis,
-		rehypeUnwrapImages,
-		slugPlugin,
-		rehypeGithubAlert,
-		[
-			autolinkHeadings,
-			{
-				behavior: 'wrap'
-			}
-		]
-	]
+    extensions: ['.svelte.md', '.md', '.svx'],
+    layout: join(__dirname, 'src/lib/components/MarkdownLayout.svelte'),
+    smartypants: {
+        dashes: 'oldschool'
+    },
+//	remarkPlugins: [enhancedImages, remarkGfm, headings, [remarkToc, { tight: true }]],
+    remarkPlugins: [remarkGfm, headings, [remarkToc, { tight: true }]],
+    rehypePlugins: [
+        rehypeAccessibleEmojis,
+        rehypeUnwrapImages,
+        slugPlugin,
+        rehypeGithubAlert,
+        [
+            autolinkHeadings,
+            {
+                behavior: 'wrap'
+            }
+        ]
+    ]
 });
 
 /**
  * Parses headings and includes the result in metadata
  */
 function headings() {
-	return function transformer(tree, vfile) {
-		// run remark-headings plugin
-		remarkHeadings()(tree, vfile);
+    return function transformer(tree, vfile) {
+        // run remark-headings plugin
+        remarkHeadings()(tree, vfile);
 
-		// include the headings data in mdsvex frontmatter
-		vfile.data.fm ??= {};
-		vfile.data.fm.headings = vfile.data.headings.map((heading) => ({
-			...heading,
-			// slugify heading.value
-			id: heading.value
-				.toLowerCase()
-				.replace(/\s/g, '-')
-				.replace(/[^a-z0-9-]/g, '')
-		}));
-	};
+        // include the headings data in mdsvex frontmatter
+        vfile.data.fm ??= {};
+        vfile.data.fm.headings = vfile.data.headings.map((heading) => ({
+            ...heading,
+            // slugify heading.value
+            id: heading.value
+                .toLowerCase()
+                .replace(/\s/g, '-')
+                .replace(/[^a-z0-9-]/g, '')
+        }));
+    };
 }
 
 export default config;
