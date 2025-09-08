@@ -37,7 +37,7 @@
 			</ul>
 		{/if}
 	</div>
-	<hr class="mb-4" />
+	<hr class="mb-8" />
 	<div class="content prose prose-stone dark:prose-invert">
 		<SvelteComponent />
 	</div>
