@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { MoonIcon, SunIcon } from 'heroicons-svelte/24/solid';
+	import { MoonIcon, SunIcon, RssIcon } from 'heroicons-svelte/24/solid';
 	import { browser } from '$app/environment';
 	import '$lib/code-highlight-styles.css';
 	interface Props {
@@ -9,7 +9,9 @@
 
 	let { children }: Props = $props();
 
-	let isDarkMode = $state(browser ? Boolean(document.documentElement.classList.contains('dark')) : true);
+	let isDarkMode = $state(
+		browser ? Boolean(document.documentElement.classList.contains('dark')) : true
+	);
 </script>
 
 <svelte:head>
@@ -39,28 +41,35 @@
 		<img src="/Cretan-labyrinth-circular-disc.svg" alt="" class="w-16 h-16" />
 		<h1 class="font-didone text-3xl">0gust1</h1></a
 	>
-	<button
-		type="button"
-		role="switch"
-		aria-label="Toggle Dark Mode"
-		aria-checked={isDarkMode}
-		class="w-5 h-5 sm:h-8 sm:w-8 sm:p-1"
-		onclick={() => {
-			isDarkMode = !isDarkMode;
-			localStorage.setItem('lightTheme', isDarkMode ? 'dark' : 'light');
+	<div class="flex items-center gap-3">
+		<a href="/rss.xml" title="RSS Feed" aria-label="RSS Feed" class="w-5 h-5 sm:h-8 sm:w-8 sm:p-1">
+			<RssIcon
+				class="w-full h-full text-zinc-400 dark:text-zinc-400 hover:text-orange-700 dark:hover:text-orange-300"
+			/>
+		</a>
+		<button
+			type="button"
+			role="switch"
+			aria-label="Toggle Dark Mode"
+			aria-checked={isDarkMode}
+			class="w-5 h-5 sm:h-8 sm:w-8 sm:p-1"
+			onclick={() => {
+				isDarkMode = !isDarkMode;
+				localStorage.setItem('lightTheme', isDarkMode ? 'dark' : 'light');
 
-			//disableTransitionsTemporarily()
+				//disableTransitionsTemporarily()
 
-			if (isDarkMode) {
-				document.querySelector('html')?.classList.add('dark');
-			} else {
-				document.querySelector('html')?.classList.remove('dark');
-			}
-		}}
-	>
-		<MoonIcon class="hidden text-zinc-500 dark:block" />
-		<SunIcon class="block text-zinc-400 dark:hidden" />
-	</button>
+				if (isDarkMode) {
+					document.querySelector('html')?.classList.add('dark');
+				} else {
+					document.querySelector('html')?.classList.remove('dark');
+				}
+			}}
+		>
+			<MoonIcon class="hidden text-zinc-500 dark:block hover:text-zinc-300" />
+			<SunIcon class="block text-zinc-400 dark:hidden hover:text-zinc-500" />
+		</button>
+	</div>
 </header>
 
 <main class="site-main container">
@@ -73,6 +82,9 @@
 		<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license external"
 			>BY-NC-SA 4.0</a
 		>
+	</p>
+	<p class="ml-auto">
+		<a href="./rss.xml">RSS Feed</a>
 	</p>
 </footer>
 
@@ -90,6 +102,7 @@
 		@apply mx-auto;
 	}
 	.site-footer {
+		@apply flex;
 		@apply px-2 py-2 mt-12;
 		@apply border-t border-stone-500 border-opacity-10;
 		@apply text-stone-400 text-xs;
