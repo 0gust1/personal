@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { getContentByUrl } from '$lib/data/content';
+import { getContentByUrl, getAllContent } from '$lib/data/content';
+import type { EntryGenerator } from './$types';
 
 export const load = async ({ params, url }) => {
 	const post = await getContentByUrl(url.pathname);
@@ -10,3 +11,11 @@ export const load = async ({ params, url }) => {
 
 	return post;
 };
+
+export const entries: EntryGenerator = async () => {
+	// Include ALL posts (including hidden) for prerendering
+	const allContent = await getAllContent();
+	return allContent.filter((content) => content.type === 'posts').map((post) => ({ slug: post.slug }));
+};
+
+export const prerender = true;

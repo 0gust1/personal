@@ -26,7 +26,7 @@ const postTypeFromPath = (path: string) => {
 //   return import.meta.glob(`/src/logs/**/*.{md,svx,svelte.md}`);
 // };
 
-const getAllContentFromSource = async () => {
+export const getAllContentFromSource = async () => {
 	return import.meta.glob([
 		'/src/content/posts/**/*.{md,svx,svelte.md}',
 		'/src/content/logs/**/*.{md,svx,svelte.md}'
@@ -61,6 +61,18 @@ export const getPublishedContentMetadata = async (
 	const publishedContent = all_content.filter((content) => (dev ? true : content.published));
 	publishedContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
 	return publishedContent;
+};
+
+// function to get visible content (not hidden) - for navigation/RSS only
+export const getVisibleContentMetadata = async (
+    contentModulesPromises: Record<string, App.MdsvexResolver>
+) => {
+    const contentPromises = contentMetadataFromModules(await contentModulesPromises);
+    const all_content = await Promise.all(contentPromises);
+    const publishedContent = all_content.filter((content) => (dev ? true : content.published));
+    const visibleContent = publishedContent.filter((content) => !content.hidden);
+    visibleContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
+    return visibleContent;
 };
 
 // export const getPosts = async () => {
@@ -124,17 +136,20 @@ export const getAllContentMetadata = async () => {
 };
 
 ///-----
-
+// we load ALL published content (including hidden) for page generation
 const loadAllContent = async () => {
-	allContentComponentResolvers = await getAllContentFromSource();
-	allContentMetadata = await getPublishedContentMetadata(allContentComponentResolvers);
+    allContentComponentResolvers = await getAllContentFromSource();
+    // Load ALL published content (including hidden) for page generation
+    allContentMetadata = await getPublishedContentMetadata(allContentComponentResolvers);
 };
 
+// Get all content of a specific type (posts or logs), excluding hidden content
 export const getAllContentOfType = async (type: 'posts' | 'logs') => {
-	if (!allContentMetadata || allContentMetadata.length === 0) {
-		await loadAllContent();
-	}
-	return allContentMetadata.filter((content) => content.type === type);
+    if (!allContentMetadata || allContentMetadata.length === 0) {
+        await loadAllContent();
+    }
+    // Filter out hidden content for navigation
+    return allContentMetadata.filter((content) => content.type === type && !content.hidden);
 };
 
 export const getAllContent = async () => {
@@ -145,11 +160,13 @@ export const getAllContent = async () => {
 	return allContentMetadata;
 };
 
+// Get all content for a specific topic (tag), excluding hidden content
 export const getContentByTopic = async (topic: string) => {
-	if (!allContentMetadata || allContentMetadata.length === 0) {
-		await loadAllContent();
-	}
-	return allContentMetadata.filter((content) => content.tags?.includes(topic));
+    if (!allContentMetadata || allContentMetadata.length === 0) {
+        await loadAllContent();
+    }
+    // Filter out hidden content for topic pages
+    return allContentMetadata.filter((content) => content.tags?.includes(topic) && !content.hidden);
 }
 
 export const getContentByUrl = async (url: string) => {
