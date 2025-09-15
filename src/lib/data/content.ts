@@ -70,7 +70,8 @@ export const getVisibleContentMetadata = async (
     const contentPromises = contentMetadataFromModules(await contentModulesPromises);
     const all_content = await Promise.all(contentPromises);
     const publishedContent = all_content.filter((content) => (dev ? true : content.published));
-    const visibleContent = publishedContent.filter((content) => !content.hidden);
+    // Include hidden content in dev mode
+    const visibleContent = publishedContent.filter((content) => dev || !content.hidden);
     visibleContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
     return visibleContent;
 };
@@ -148,8 +149,8 @@ export const getAllContentOfType = async (type: 'posts' | 'logs') => {
     if (!allContentMetadata || allContentMetadata.length === 0) {
         await loadAllContent();
     }
-    // Filter out hidden content for navigation
-    return allContentMetadata.filter((content) => content.type === type && !content.hidden);
+    // Filter out hidden content for navigation, but show in dev mode
+    return allContentMetadata.filter((content) => content.type === type && (dev || !content.hidden));
 };
 
 export const getAllContent = async () => {
@@ -165,8 +166,8 @@ export const getContentByTopic = async (topic: string) => {
     if (!allContentMetadata || allContentMetadata.length === 0) {
         await loadAllContent();
     }
-    // Filter out hidden content for topic pages
-    return allContentMetadata.filter((content) => content.tags?.includes(topic) && !content.hidden);
+    // Filter out hidden content for topic pages, but show in dev mode
+    return allContentMetadata.filter((content) => content.tags?.includes(topic) && (dev || !content.hidden));
 }
 
 export const getContentByUrl = async (url: string) => {
