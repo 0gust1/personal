@@ -24,6 +24,8 @@ declare global {
 			date: string;
 			tags?: string[];
 			published: boolean;
+			hidden?: boolean; // will generate a page, but not show in lists, navigation and RSS feeds
+			lang?: string;
 			updated_at?: string;
 		}
 	}

@@ -2,11 +2,11 @@
 // It's helpful for SEO but does require you to keep it updated to reflect the routes of your website.
 // It is OK to delete this file if you'd rather not bother with it.
 
-import { getAllContent } from '$lib/data/content';
+import { getVisibleContentMetadata, getAllContentFromSource } from '$lib/data/content';
 import { websiteURL } from '$lib/config';
 
 export const prerender = true;
-const posts = await getAllContent();
+const posts = await getVisibleContentMetadata(await getAllContentFromSource());
 // make sure this matches your post route
 const getPostUrl = (slug: string) => `${websiteURL}/posts/${slug}`;
 

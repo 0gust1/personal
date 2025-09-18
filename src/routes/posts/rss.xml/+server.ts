@@ -7,7 +7,7 @@ import { getRSS } from '$lib/rss_gen';
 import { siteDescription } from '$lib/config';
 
 export const prerender = true;
-const blogPostsCollection = await getAllContentOfType('posts');
+const blogPostsCollection = (await getAllContentOfType('posts')); // Already filtered by getAllContentOfType
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}

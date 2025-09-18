@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import type { SvelteComponentTyped } from 'svelte/internal';
 	import PageHead from '$lib/components/PageHead.svelte';
 	import ArticleTitle from '$lib/components/ArticleTitle.svelte';
 	import ArticleMeta from '$lib/components/ArticleMeta.svelte';
@@ -38,7 +37,7 @@
 			</ul>
 		{/if}
 	</div>
-	<hr class="mb-4" />
+	<hr class="mb-8" />
 	<div class="content prose prose-stone dark:prose-invert">
 		<SvelteComponent />
 	</div>

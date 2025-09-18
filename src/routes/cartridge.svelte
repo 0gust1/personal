@@ -7,7 +7,9 @@
 		'An Hodgepodge',
 		'A Jambalaya',
 		'A Mélange',
-		'A Patchwork'
+		'A Patchwork',
+		'A Messy Desk',
+		'A Perpetual Work-in-Progress',
 	];
 	const random_synonym =
 		miscellanea_synonyms[Math.floor(Math.random() * miscellanea_synonyms.length)];
