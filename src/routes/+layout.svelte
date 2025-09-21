@@ -2,7 +2,10 @@
 	import '../app.postcss';
 	import { MoonIcon, SunIcon, RssIcon } from 'heroicons-svelte/24/solid';
 	import { browser } from '$app/environment';
+	import { updated } from '$app/state';
+	import UpdateNotification from '$lib/components/UpdateNotification.svelte';
 	import '$lib/code-highlight-styles.css';
+	
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -12,6 +15,28 @@
 	let isDarkMode = $state(
 		browser ? Boolean(document.documentElement.classList.contains('dark')) : true
 	);
+
+	// Track whether to show update notification and if it's been dismissed
+	let showUpdateNotification = $state(false);
+	let updateDismissed = $state(false);
+
+	// Watch for updates and show notification
+	$effect(() => {
+		if (browser && updated.current && !updateDismissed) {
+			showUpdateNotification = true;
+		}
+	});
+
+	function handleUpdateDismiss() {
+		showUpdateNotification = false;
+		updateDismissed = true;
+	}
+
+	function handleUpdateReload() {
+		// Clear any dismissal state before reloading
+		updateDismissed = false;
+		window.location.reload();
+	}
 </script>
 
 <svelte:head>
@@ -57,8 +82,6 @@
 				isDarkMode = !isDarkMode;
 				localStorage.setItem('lightTheme', isDarkMode ? 'dark' : 'light');
 
-				//disableTransitionsTemporarily()
-
 				if (isDarkMode) {
 					document.querySelector('html')?.classList.add('dark');
 				} else {
@@ -87,6 +110,13 @@
 		<a href="./rss.xml">RSS Feed</a>
 	</p>
 </footer>
+
+<!-- Update notification -->
+<UpdateNotification 
+	show={showUpdateNotification}
+	onReload={handleUpdateReload}
+	onDismiss={handleUpdateDismiss}
+/>
 
 <style lang="postcss">
 	.site-header {
