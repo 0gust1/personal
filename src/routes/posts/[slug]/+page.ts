@@ -15,7 +15,9 @@ export const load = async ({ params, url }) => {
 export const entries: EntryGenerator = async () => {
 	// Include ALL posts (including hidden) for prerendering
 	const allContent = await getAllContent();
-	return allContent.filter((content) => content.type === 'posts').map((post) => ({ slug: post.slug }));
+	return allContent
+		.filter((content) => content.type === 'posts')
+		.map((post) => ({ slug: post.slug }));
 };
 
 export const prerender = true;

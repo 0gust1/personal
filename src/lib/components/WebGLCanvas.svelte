@@ -19,7 +19,7 @@
 		webglVersion = 1,
 		vertexShaders = [],
 		fragShaders = [
-		`
+			`
 		precision highp float;
 
 		uniform vec2 u_resolution;
@@ -32,7 +32,7 @@
 			gl_FragColor = vec4(fract((gl_FragCoord.xy - u_mouse) / u_resolution), fract(u_time), 1);
 		}
 	`
-	]
+		]
 	}: Props = $props();
 
 	let time = 0;

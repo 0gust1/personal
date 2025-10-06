@@ -30,8 +30,8 @@
 				{#each data.frontmatter.tags as tag}
 					<li class="">
 						<a href="/topics/{encodeURIComponent(tag)}">
-						<span class="tag">{tag}</span>
-					</a>
+							<span class="tag">{tag}</span>
+						</a>
 					</li>
 				{/each}
 			</ul>

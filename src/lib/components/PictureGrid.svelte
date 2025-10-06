@@ -1,15 +1,15 @@
 <script lang="ts">
 	interface ImageModule {
-		sources:{
-			avif: string,
-			webp:string,
-			jpeg:string
-		},
-		img:{
-			src: string,
-			w: number,
-			h: number
-		}
+		sources: {
+			avif: string;
+			webp: string;
+			jpeg: string;
+		};
+		img: {
+			src: string;
+			w: number;
+			h: number;
+		};
 	}
 
 	interface ImageData {
@@ -169,7 +169,7 @@
 			<!-- Next button -->
 			{#if selectedIndex < images.length - 1}
 				<button
-					class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl md:text-3xl hover:text-gray-300 z-10 bg-black/50 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center "
+					class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl md:text-3xl hover:text-gray-300 z-10 bg-black/50 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center"
 					onclick={(e) => {
 						e.stopPropagation();
 						navigateNext();
@@ -198,7 +198,9 @@
 				class="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-white text-center bg-black/50 px-2 py-1 rounded max-w-[80%] pointer-events-none"
 			>
 				{#if selectedImage.title}
-					<p class="text-sm truncate text-gray-200 mt-1 mb-2">{selectedImage.title || selectedImage.alt}</p>
+					<p class="text-sm truncate text-gray-200 mt-1 mb-2">
+						{selectedImage.title || selectedImage.alt}
+					</p>
 				{/if}
 
 				<p class="text-xs text-gray-400 my-1">{selectedIndex + 1} / {images.length}</p>

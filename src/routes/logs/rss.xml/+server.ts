@@ -7,7 +7,7 @@ import { getRSS } from '$lib/rss_gen';
 import { siteDescription } from '$lib/config';
 
 export const prerender = true;
-const logsContentCollection = (await getAllContentOfType('logs')); // Already filtered by getAllContentOfType
+const logsContentCollection = await getAllContentOfType('logs'); // Already filtered by getAllContentOfType
 
 export async function GET({ setHeaders }) {
 	setHeaders({

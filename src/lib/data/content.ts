@@ -65,15 +65,15 @@ export const getPublishedContentMetadata = async (
 
 // function to get visible content (not hidden) - for navigation/RSS only
 export const getVisibleContentMetadata = async (
-    contentModulesPromises: Record<string, App.MdsvexResolver>
+	contentModulesPromises: Record<string, App.MdsvexResolver>
 ) => {
-    const contentPromises = contentMetadataFromModules(await contentModulesPromises);
-    const all_content = await Promise.all(contentPromises);
-    const publishedContent = all_content.filter((content) => (dev ? true : content.published));
-    // Include hidden content in dev mode
-    const visibleContent = publishedContent.filter((content) => dev || !content.hidden);
-    visibleContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
-    return visibleContent;
+	const contentPromises = contentMetadataFromModules(await contentModulesPromises);
+	const all_content = await Promise.all(contentPromises);
+	const publishedContent = all_content.filter((content) => (dev ? true : content.published));
+	// Include hidden content in dev mode
+	const visibleContent = publishedContent.filter((content) => dev || !content.hidden);
+	visibleContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
+	return visibleContent;
 };
 
 // export const getPosts = async () => {
@@ -116,22 +116,24 @@ export const getAllContentMetadata = async () => {
 	if (!allContentMetadata || allContentMetadata.length === 0) {
 		await loadAllContent();
 	}
-	const tags = allContentMetadata.reduce(
-		(acc, content) => {
-			const contentTags = content.tags || [];
-			// check if one of the contenttTag is already in the accumulator
-			contentTags.forEach((contentTag) => {
-				if (acc.some((tagAcc) => tagAcc.tag === contentTag)) {
-					acc.find((tagAcc) => tagAcc.tag === contentTag).count++;
-				} else {
-					acc.push({ tag: contentTag, count: 1 });
-				}
-			});
+	const tags = allContentMetadata
+		.reduce(
+			(acc, content) => {
+				const contentTags = content.tags || [];
+				// check if one of the contenttTag is already in the accumulator
+				contentTags.forEach((contentTag) => {
+					if (acc.some((tagAcc) => tagAcc.tag === contentTag)) {
+						acc.find((tagAcc) => tagAcc.tag === contentTag).count++;
+					} else {
+						acc.push({ tag: contentTag, count: 1 });
+					}
+				});
 
-			return acc;
-		},
-		[] as { tag: string; count: number }[]
-	).sort((a, b) => (a.count < b.count ? 1 : -1));
+				return acc;
+			},
+			[] as { tag: string; count: number }[]
+		)
+		.sort((a, b) => (a.count < b.count ? 1 : -1));
 
 	return { tags, meta: { total: allContentMetadata.length } };
 };
@@ -139,18 +141,18 @@ export const getAllContentMetadata = async () => {
 ///-----
 // we load ALL published content (including hidden) for page generation
 const loadAllContent = async () => {
-    allContentComponentResolvers = await getAllContentFromSource();
-    // Load ALL published content (including hidden) for page generation
-    allContentMetadata = await getPublishedContentMetadata(allContentComponentResolvers);
+	allContentComponentResolvers = await getAllContentFromSource();
+	// Load ALL published content (including hidden) for page generation
+	allContentMetadata = await getPublishedContentMetadata(allContentComponentResolvers);
 };
 
 // Get all content of a specific type (posts or logs), excluding hidden content
 export const getAllContentOfType = async (type: 'posts' | 'logs') => {
-    if (!allContentMetadata || allContentMetadata.length === 0) {
-        await loadAllContent();
-    }
-    // Filter out hidden content for navigation, but show in dev mode
-    return allContentMetadata.filter((content) => content.type === type && (dev || !content.hidden));
+	if (!allContentMetadata || allContentMetadata.length === 0) {
+		await loadAllContent();
+	}
+	// Filter out hidden content for navigation, but show in dev mode
+	return allContentMetadata.filter((content) => content.type === type && (dev || !content.hidden));
 };
 
 export const getAllContent = async () => {
@@ -163,12 +165,14 @@ export const getAllContent = async () => {
 
 // Get all content for a specific topic (tag), excluding hidden content
 export const getContentByTopic = async (topic: string) => {
-    if (!allContentMetadata || allContentMetadata.length === 0) {
-        await loadAllContent();
-    }
-    // Filter out hidden content for topic pages, but show in dev mode
-    return allContentMetadata.filter((content) => content.tags?.includes(topic) && (dev || !content.hidden));
-}
+	if (!allContentMetadata || allContentMetadata.length === 0) {
+		await loadAllContent();
+	}
+	// Filter out hidden content for topic pages, but show in dev mode
+	return allContentMetadata.filter(
+		(content) => content.tags?.includes(topic) && (dev || !content.hidden)
+	);
+};
 
 export const getContentByUrl = async (url: string) => {
 	if (!allContentComponentResolvers || Object.keys(allContentComponentResolvers).length === 0) {

@@ -5,7 +5,7 @@
 	import { updated } from '$app/state';
 	import UpdateNotification from '$lib/components/UpdateNotification.svelte';
 	import '$lib/code-highlight-styles.css';
-	
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -112,7 +112,7 @@
 </footer>
 
 <!-- Update notification -->
-<UpdateNotification 
+<UpdateNotification
 	show={showUpdateNotification}
 	onReload={handleUpdateReload}
 	onDismiss={handleUpdateDismiss}
