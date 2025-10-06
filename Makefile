@@ -153,7 +153,7 @@ deps: ## Show dependency information
 
 .PHONY: outdated
 outdated: ## Check for outdated packages
-	npm outdated
+	@npm outdated || true
 
 # Maintenance
 .PHONY: reset
@@ -189,19 +189,6 @@ deploy-build: clean check build ## Full deployment build with validation
 .PHONY: publish
 publish: ## Build and publish to Neocities
 	npm run build && neocities push build/
-
-# Aliases for convenience
-.PHONY: d
-d: dev ## Alias for dev
-
-.PHONY: b
-b: build ## Alias for build
-
-.PHONY: c
-c: check ## Alias for check
-
-.PHONY: i
-i: install ## Alias for install
 
 # Default target when no arguments provided
 .DEFAULT_GOAL := help
