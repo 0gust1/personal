@@ -186,7 +186,7 @@
 				onclick={(e) => e.stopPropagation()}
 			>
 				<enhanced:img
-					src={selectedImage.src.default}
+					src={selectedImage.src}
 					alt={selectedImage.alt}
 					title={selectedImage.title || selectedImage.alt}
 					class="max-w-full max-h-full object-contain pointer-events-none"
