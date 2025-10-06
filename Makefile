@@ -186,6 +186,10 @@ deploy-build: clean check build ## Full deployment build with validation
 	@echo "Deployment build complete"
 	@echo "Build size: $$(du -sh $(BUILD_DIR) | cut -f1)"
 
+.PHONY: publish
+publish: ## Build and publish to Neocities
+	npm run build && neocities push build/
+
 # Aliases for convenience
 .PHONY: d
 d: dev ## Alias for dev
