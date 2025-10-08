@@ -188,7 +188,8 @@ deploy-build: clean check build ## Full deployment build with validation
 
 .PHONY: publish
 publish: ## Build and publish to Neocities
-	npm run build && neocities push build/
+# 	npm run build && neocities push build/
+	npm run build && npm run deploy-to-neocities
 
 # Default target when no arguments provided
 .DEFAULT_GOAL := help
