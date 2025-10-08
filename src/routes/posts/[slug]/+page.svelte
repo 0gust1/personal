@@ -28,7 +28,7 @@
 		<div class="date-info">
 			<ArticleMeta date={data.frontmatter.date} updated_at={data.frontmatter.updated_at ?? null} />
 		</div>
-		{#if data.frontmatter.tags.length}
+		{#if data.frontmatter.tags && data.frontmatter.tags.length}
 			<ul class="article-tags">
 				{#each data.frontmatter.tags as tag}
 					<li class="">
@@ -68,13 +68,13 @@
 		.heading {
 			@apply text-xs;
 		}
-		.heading-2{
+		.heading-2 {
 			@apply pl-2;
 		}
-		.heading-3{
+		.heading-3 {
 			@apply pl-4;
 		}
-		.heading-4{
+		.heading-4 {
 			@apply pl-5;
 		}
 	}

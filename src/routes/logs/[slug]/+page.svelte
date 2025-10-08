@@ -25,13 +25,13 @@
 		<div class="date-info">
 			<ArticleMeta date={data.frontmatter.date} updated_at={data.frontmatter.updated_at ?? null} />
 		</div>
-		{#if data.frontmatter.tags.length}
+		{#if data.frontmatter.tags && data.frontmatter.tags.length}
 			<ul class="article-tags">
 				{#each data.frontmatter.tags as tag}
 					<li class="">
 						<a href="/topics/{encodeURIComponent(tag)}">
-						<span class="tag">{tag}</span>
-					</a>
+							<span class="tag">{tag}</span>
+						</a>
 					</li>
 				{/each}
 			</ul>

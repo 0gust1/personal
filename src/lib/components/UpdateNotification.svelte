@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ArrowPathIcon, XMarkIcon } from 'heroicons-svelte/24/outline';
-	
+
 	interface Props {
 		show: boolean;
 		onReload?: () => void;
@@ -76,7 +76,7 @@
 
 	:global(.dark) .update-notification {
 		@apply bg-eigengrau-700 border-eigengrau-600;
-    @apply shadow-eigengrau-900;
+		@apply shadow-eigengrau-900;
 	}
 
 	@keyframes slideIn {

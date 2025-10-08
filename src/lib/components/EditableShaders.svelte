@@ -23,12 +23,16 @@
 		return shaders;
 	}
 
-	let vtxShaders = $derived(Object.entries(allShaders)
-		.filter(([k]) => k[0] === 'v')
-		.map(([_, v]) => v));
-	let frgShaders = $derived(Object.entries(allShaders)
-		.filter(([k]) => k[0] === 'f')
-		.map(([_, v]) => v));
+	let vtxShaders = $derived(
+		Object.entries(allShaders)
+			.filter(([k]) => k[0] === 'v')
+			.map(([_, v]) => v)
+	);
+	let frgShaders = $derived(
+		Object.entries(allShaders)
+			.filter(([k]) => k[0] === 'f')
+			.map(([_, v]) => v)
+	);
 </script>
 
 {#key allShaders}
@@ -63,7 +67,8 @@
 			</ul>
 		</div>
 		<div class="shader_editor">
-			<textarea bind:value={allShaders[currShader]} class="w-full h-96 p-4 font-mono text-xs"></textarea>
+			<textarea bind:value={allShaders[currShader]} class="w-full h-96 p-4 font-mono text-xs"
+			></textarea>
 		</div>
 	</div>
 	<!-- <textarea bind:value={shaderCode} class="w-full h-96 p-4 font-mono text-xs" /> -->

@@ -38,7 +38,7 @@ const config = defineConfig({
         dashes: 'oldschool'
     },
 //	remarkPlugins: [enhancedImages, remarkGfm, headings, [remarkToc, { tight: true }]],
-    remarkPlugins: [remarkGfm, headings, [remarkToc, { tight: true }]],
+    remarkPlugins: [remarkGfm, headings, [remarkToc, {heading:'(table[ -]of[ -])?contents?|toc|sommaire', tight: true }]],
     rehypePlugins: [
         rehypeAccessibleEmojis,
         rehypeUnwrapImages,
