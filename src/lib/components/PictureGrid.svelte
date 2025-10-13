@@ -36,8 +36,8 @@
 		}[imageCount] || 'grid-cols-3'
 	);
 
-	// Generate CSS classes for each image
-	function getImageAttributes(image: ImageData, index: number): { classes: string; sizes: string } {
+	// Generate CSS classes for each image (pure function)
+	function getImageAttributes(index: number, totalImages: number): { classes: string; sizes: string } {
 		let classes = 'picture-item overflow-hidden cursor-pointer';
 		// Account for max 2x DPR on high-res displays
 		// Regular images: actual size ~419px, so cap at 800px to handle 2x DPR
@@ -45,9 +45,9 @@
 
 		// For full-width spanning images: actual size ~848px, cap at 1600px for 2x DPR
 		if (
-			(imageCount === 3 && index === 2) ||
-			(imageCount === 5 && index === 4) ||
-			imageCount === 1
+			(totalImages === 3 && index === 2) ||
+			(totalImages === 5 && index === 4) ||
+			totalImages === 1
 		) {
 			classes += ' col-span-2';
 			sizes = '(min-width: 1024px) 900px, 100vw';
@@ -116,7 +116,7 @@
 	<div class="picture-grid grid gap-2 {gridClass} items-start">
 		{#each images as image, index}
 			<div
-				class={getImageAttributes(image, index).classes}
+				class={getImageAttributes(index, imageCount).classes}
 				onclick={() => openLightbox(image, index)}
 				onkeydown={(e) => e.key === 'Enter' && openLightbox(image, index)}
 				role="button"
@@ -128,7 +128,7 @@
 					title={image.title || image.alt}
 					class="picture-image w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 					loading="lazy"
-					sizes={getImageAttributes(image, index).sizes}
+					sizes={getImageAttributes(index, imageCount).sizes}
 				/>
 			</div>
 		{/each}
