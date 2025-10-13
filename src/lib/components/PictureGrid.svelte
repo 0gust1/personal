@@ -37,15 +37,19 @@
 	);
 
 	// Generate CSS classes for each image
-	function getImageClasses(image: ImageData, index: number): string {
-		let classes = 'picture-item overflow-hidden cursor-pointer';
+	function getImageAttributes(image: ImageData, index: number):  {classes:string, sizes:string} {
+    let classes = 'picture-item overflow-hidden cursor-pointer';
+    // Account for max 2x DPR on high-res displays
+    // Regular images: actual size ~419px, so cap at 800px to handle 2x DPR
+    let sizes = '(min-width: 1024px) 440px, 50vw';
+    
+    // For full-width spanning images: actual size ~848px, cap at 1600px for 2x DPR
+    if ((imageCount === 3 && index === 2) || (imageCount === 5 && index === 4) || (imageCount === 1)) {
+        classes += ' col-span-2';
+        sizes = '(min-width: 1024px) 900px, 100vw';
+    }
 
-		// Default behavior for odd numbers (3 or 5 images)
-		if ((imageCount === 3 && index === 2) || (imageCount === 5 && index === 4)) {
-			classes += ' col-span-2';
-		}
-
-		return classes;
+    return {classes, sizes};
 	}
 
 	// Lightbox state using runes
@@ -108,7 +112,7 @@
 	<div class="picture-grid grid gap-2 {gridClass} items-start">
 		{#each images as image, index}
 			<div
-				class={getImageClasses(image, index)}
+				class={getImageAttributes(image, index).classes}
 				onclick={() => openLightbox(image, index)}
 				onkeydown={(e) => e.key === 'Enter' && openLightbox(image, index)}
 				role="button"
@@ -120,6 +124,7 @@
 					title={image.title || image.alt}
 					class="picture-image w-full h-full object-cover hover:scale-105 transition-transform duration-300"
 					loading="lazy"
+					sizes={getImageAttributes(image, index).sizes}
 				/>
 			</div>
 		{/each}
@@ -191,6 +196,7 @@
 					title={selectedImage.title || selectedImage.alt}
 					class="max-w-full max-h-full object-contain pointer-events-none"
 					style="max-width: calc(100vw - 4rem); max-height: calc(100vh - 4rem);"
+					sizes='(min-width: 1920px) 1800px, (min-width: 1280px) 1200px, (min-width: 768px) 90vw, 95vw'
 				/>
 			</div>
 
