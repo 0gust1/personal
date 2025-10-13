@@ -37,7 +37,10 @@
 	);
 
 	// Generate CSS classes for each image (pure function)
-	function getImageAttributes(index: number, totalImages: number): { classes: string; sizes: string } {
+	function getImageAttributes(
+		index: number,
+		totalImages: number
+	): { classes: string; sizes: string } {
 		let classes = 'picture-item overflow-hidden cursor-pointer';
 		// Account for max 2x DPR on high-res displays
 		// Regular images: actual size ~419px, so cap at 800px to handle 2x DPR
@@ -60,10 +63,12 @@
 	let selectedImage = $state<ImageData | null>(null);
 	let selectedIndex = $state(0);
 	let dialogElement = $state<HTMLElement | null>(null);
+	let isImageLoading = $state(false);
 
 	function openLightbox(image: ImageData, index: number) {
 		selectedImage = image;
 		selectedIndex = index;
+		isImageLoading = true;
 		document.body.style.overflow = 'hidden';
 
 		// Focus the dialog for screen readers
@@ -79,17 +84,24 @@
 	}
 
 	function navigatePrevious() {
-		if (selectedIndex > 0) {
+		if (selectedIndex > 0 && !isImageLoading) {
+			isImageLoading = true;
 			selectedIndex--;
 			selectedImage = images[selectedIndex];
 		}
 	}
 
 	function navigateNext() {
-		if (selectedIndex < images.length - 1) {
+		if (selectedIndex < images.length - 1 && !isImageLoading) {
+			isImageLoading = true;
 			selectedIndex++;
 			selectedImage = images[selectedIndex];
 		}
+	}
+
+	// Handle image load completion
+	function handleImageLoad() {
+		isImageLoading = false;
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -167,7 +179,10 @@
 			<!-- Previous button -->
 			{#if selectedIndex > 0}
 				<button
-					class="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl md:text-3xl hover:text-gray-300 z-10 bg-black/50 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center"
+					class="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl md:text-3xl hover:text-gray-300 z-10 bg-black/50 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-opacity"
+					class:opacity-50={isImageLoading}
+					class:cursor-not-allowed={isImageLoading}
+					disabled={isImageLoading}
 					onclick={(e) => {
 						e.stopPropagation();
 						navigatePrevious();
@@ -181,7 +196,10 @@
 			<!-- Next button -->
 			{#if selectedIndex < images.length - 1}
 				<button
-					class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl md:text-3xl hover:text-gray-300 z-10 bg-black/50 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center"
+					class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl md:text-3xl hover:text-gray-300 z-10 bg-black/50 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-opacity"
+					class:opacity-50={isImageLoading}
+					class:cursor-not-allowed={isImageLoading}
+					disabled={isImageLoading}
 					onclick={(e) => {
 						e.stopPropagation();
 						navigateNext();
@@ -199,6 +217,17 @@
 				onkeydown={(e) => e.stopPropagation()}
 				role="presentation"
 			>
+				<!-- Loading spinner -->
+				{#if isImageLoading}
+					<div
+						class="absolute inset-0 flex items-center justify-center bg-black/40 z-10 pointer-events-none"
+					>
+						<div
+							class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"
+						></div>
+					</div>
+				{/if}
+
 				<enhanced:img
 					src={selectedImage.src}
 					alt={selectedImage.alt}
@@ -206,6 +235,7 @@
 					class="max-w-full max-h-full object-contain pointer-events-none"
 					style="max-width: calc(100vw - 4rem); max-height: calc(100vh - 4rem);"
 					sizes="(min-width: 1920px) 1800px, (min-width: 1280px) 1200px, (min-width: 768px) 90vw, 95vw"
+					onload={handleImageLoad}
 				/>
 			</div>
 
