@@ -1,4 +1,5 @@
 <script lang="ts">
+	// Image module exposed by Sveltekit's enhanced:img plugin
 	interface ImageModule {
 		sources: {
 			avif: string;
@@ -16,56 +17,98 @@
 		src: ImageModule;
 		alt: string;
 		title?: string;
+		colSpan?: 1 | 2 | 3 | 4 | 5 | 6; // Number of columns to span (out of 6 internal columns)
+		rowSpan?: 1 | 2 | 3; // Number of rows to span
+		disableAutoPortrait?: boolean; // If true, disables automatic portrait handling
 	}
 
-	let { images = $bindable([]) }: { images: ImageData[] } = $props();
+	type ColumnCount = 1 | 2 | 3;
+	type ColSpan = 1 | 2 | 3 | 4 | 5 | 6;
+	type Orientation = 'portrait' | 'landscape' | 'square';
 
-	// Validate image count using derived runes
-	//const images = $derived(images.slice(0, 6)); // Max 6 images
+	let {
+		images = [],
+		columns = 2
+	}: {
+		images: ImageData[];
+		columns?: ColumnCount;
+	} = $props();
+
 	const imageCount = $derived(images.length);
 
-	// Grid layout classes based on image count
-	const gridClass = $derived(
-		{
-			1: 'grid-cols-1',
-			2: 'grid-cols-2',
-			3: 'odd-image-grid', // Custom grid for 3 images
-			4: 'grid-cols-2',
-			5: 'odd-image-grid', // Custom grid for 5 images
-			6: 'grid-cols-3'
-		}[imageCount] || 'grid-cols-3'
-	);
+	// Map user-facing columns (1, 2, 3) to internal 6-column grid spans
+	const COLUMN_SPAN_MAP: Record<ColumnCount, ColSpan> = {
+		1: 6,
+		2: 3,
+		3: 2
+	} as const;
+
+	const defaultColSpan = $derived(COLUMN_SPAN_MAP[columns]);
+
+	// Detect image orientation based on aspect ratio
+	function getImageOrientation(image: ImageData): Orientation {
+		const { w, h } = image.src.img;
+		const ratio = w / h;
+
+		if (ratio < 0.95) return 'portrait';
+		if (ratio > 1.05) return 'landscape';
+		return 'square';
+	}
 
 	// Generate CSS classes for each image (pure function)
 	function getImageAttributes(
-		index: number,
-		totalImages: number
+		totalImages: number,
+		image: ImageData,
+		defaultColSpan: number
 	): { classes: string; sizes: string } {
+		const orientation = getImageOrientation(image);
+		const isAutoPortraitDisabled = image.disableAutoPortrait === true;
+
+		// Determine actual column span
+		const actualColSpan: ColSpan =
+			image.colSpan ?? (totalImages === 1 ? 6 : (defaultColSpan as ColSpan));
+
+		// Auto-apply rowSpan: 2 for portrait images unless explicitly set or disabled
+		const actualRowSpan =
+			image.rowSpan ??
+			(orientation === 'portrait' && !isAutoPortraitDisabled ? 2 : 1);
+
+		// Build CSS classes
 		let classes = 'picture-item overflow-hidden cursor-pointer';
-		// Account for max 2x DPR on high-res displays
-		// Regular images: actual size ~419px, so cap at 800px to handle 2x DPR
-		let sizes = '(min-width: 1024px) 440px, 50vw';
 
-		// For full-width spanning images: actual size ~848px, cap at 1600px for 2x DPR
-		if (
-			(totalImages === 3 && index === 2) ||
-			(totalImages === 5 && index === 4) ||
-			totalImages === 1
-		) {
-			classes += ' col-span-2';
-			sizes = '(min-width: 1024px) 900px, 100vw';
+		// Apply aspect ratio (treat disabled auto-portrait like landscape)
+		if (orientation === 'portrait' && !isAutoPortraitDisabled) {
+			classes += ' aspect-portrait';
+		} else if (orientation === 'landscape' || (orientation === 'portrait' && isAutoPortraitDisabled)) {
+			classes += ' aspect-landscape';
+		} else {
+			classes += ' aspect-square';
 		}
 
-		if ((totalImages === 7 && index === 6))
-		{
-			classes += ' col-span-3';
-			sizes = '(min-width: 1024px) 900px, 100vw';
+		// Apply column span
+		classes += ` col-span-${actualColSpan}`;
+
+		// Apply row span if greater than 1
+		if (actualRowSpan > 1) {
+			classes += ` row-span-${actualRowSpan}`;
 		}
+
+		// Adjust sizes based on column span for optimal image loading (accounts for 2x DPR)
+		const SIZE_MAP: Record<ColSpan, string> = {
+			1: '(min-width: 1024px) 150px, 16vw',
+			2: '(min-width: 1024px) 300px, 33vw',
+			3: '(min-width: 1024px) 440px, 50vw',
+			4: '(min-width: 1024px) 600px, 66vw',
+			5: '(min-width: 1024px) 750px, 83vw',
+			6: '(min-width: 1024px) 900px, 100vw'
+		};
+
+		const sizes = SIZE_MAP[actualColSpan];
 
 		return { classes, sizes };
 	}
 
-	// Lightbox state using runes
+	// Lightbox state
 	let selectedImage = $state<ImageData | null>(null);
 	let selectedIndex = $state(0);
 	let dialogElement = $state<HTMLElement | null>(null);
@@ -77,15 +120,12 @@
 		isImageLoading = true;
 		document.body.style.overflow = 'hidden';
 
-		// Focus the dialog for screen readers
-		setTimeout(() => {
-			dialogElement?.focus();
-		}, 0);
+		// Focus the dialog for keyboard navigation
+		setTimeout(() => dialogElement?.focus(), 0);
 	}
 
 	function closeLightbox() {
 		selectedImage = null;
-		// Restore body scroll
 		document.body.style.overflow = '';
 	}
 
@@ -105,7 +145,6 @@
 		}
 	}
 
-	// Handle image load completion
 	function handleImageLoad() {
 		isImageLoading = false;
 	}
@@ -113,28 +152,26 @@
 	function handleKeydown(event: KeyboardEvent) {
 		if (!selectedImage) return;
 
-		switch (event.key) {
-			case 'Escape':
-				closeLightbox();
-				break;
-			case 'ArrowLeft':
-				navigatePrevious();
-				break;
-			case 'ArrowRight':
-				navigateNext();
-				break;
-		}
+		const keyHandlers: Record<string, () => void> = {
+			Escape: closeLightbox,
+			ArrowLeft: navigatePrevious,
+			ArrowRight: navigateNext
+		};
+
+		const handler = keyHandlers[event.key];
+		if (handler) handler();
 	}
 </script>
 
 <!-- Keyboard event listener -->
 <svelte:window onkeydown={handleKeydown} />
 
-{#if images.length >= 1}
-	<div class="picture-grid grid gap-2 {gridClass} items-start">
+{#if images.length > 0}
+	<div class="picture-grid grid gap-2 grid-cols-6 items-start mb-2">
 		{#each images as image, index}
+			{@const attrs = getImageAttributes(imageCount, image, defaultColSpan)}
 			<div
-				class={getImageAttributes(index, imageCount).classes}
+				class={attrs.classes}
 				onclick={() => openLightbox(image, index)}
 				onkeydown={(e) => e.key === 'Enter' && openLightbox(image, index)}
 				role="button"
@@ -144,9 +181,9 @@
 					src={image.src}
 					alt={image.alt}
 					title={image.title || image.alt}
-					class="picture-image w-full h-full object-cover hover:scale-[103%] transition-transform duration-300"
+					class="picture-image w-full h-full object-cover"
 					loading="lazy"
-					sizes={getImageAttributes(index, imageCount).sizes}
+					sizes={attrs.sizes}
 				/>
 			</div>
 		{/each}
@@ -239,7 +276,7 @@
 					alt={selectedImage.alt}
 					title={selectedImage.title || selectedImage.alt}
 					class="max-w-full max-h-full object-contain pointer-events-none"
-					style="max-width: calc(100vw - 4rem); max-height: calc(100vh - 4rem);"
+					style="max-width: min(1625px, calc(100vw - 4rem)); max-height: calc(100vh - 4rem);"
 					sizes="(min-width: 1920px) 1800px, (min-width: 1280px) 1200px, (min-width: 768px) 90vw, 95vw"
 					onload={handleImageLoad}
 				/>
@@ -270,9 +307,20 @@
 
 	/* Picture items maintain consistent aspect ratio containers */
 	.picture-item {
-		/* @apply aspect-[4/3] md:aspect-[16/9]; */
+		@apply relative h-full w-full;
+	}
+
+	/* Aspect ratio classes based on image orientation */
+	.aspect-portrait {
+		@apply aspect-[3/4];
+	}
+
+	.aspect-landscape {
 		@apply aspect-[4/3];
-		@apply relative;
+	}
+
+	.aspect-square {
+		@apply aspect-[1/1];
 	}
 
 	/* Images fill their containers with object-cover for cropping */
@@ -280,11 +328,17 @@
 		@apply absolute inset-0;
 		/* Default: crop portraits, maintain landscapes */
 		object-position: center;
+		/* Smooth transition for hover effects */
+		transition:
+			filter 0.1s ease-out,
+			transform 0.1s ease-out;
 	}
 
-	/* Custom grid for odd number of images: 2 on top rows, last one spanning full width on bottom */
-	.odd-image-grid {
-		grid-template-columns: 1fr 1fr;
+	/* Elegant hover effect: subtle brightness and slight scale */
+	.picture-item:hover .picture-image,
+	.picture-item:focus .picture-image {
+		filter: contrast(1.05) brightness(1.1) saturate(1.1);
+		/* transform: scale(1.01); */
 	}
 
 	/* Lightbox styles */
@@ -326,7 +380,9 @@
 	/* Delayed spinner - only shows after 200ms to avoid flash on instant loads */
 	.spinner-delayed {
 		opacity: 0;
-		animation: fadeInSpinner 0.1s ease-out 0.2s forwards, spin 0.6s linear 0.2s infinite;
+		animation:
+			fadeInSpinner 0.1s ease-out 0.2s forwards,
+			spin 0.6s linear 0.2s infinite;
 	}
 
 	@keyframes fadeInSpinner {
