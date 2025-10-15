@@ -56,6 +56,12 @@
 			sizes = '(min-width: 1024px) 900px, 100vw';
 		}
 
+		if ((totalImages === 7 && index === 6))
+		{
+			classes += ' col-span-3';
+			sizes = '(min-width: 1024px) 900px, 100vw';
+		}
+
 		return { classes, sizes };
 	}
 
@@ -138,7 +144,7 @@
 					src={image.src}
 					alt={image.alt}
 					title={image.title || image.alt}
-					class="picture-image w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+					class="picture-image w-full h-full object-cover hover:scale-[103%] transition-transform duration-300"
 					loading="lazy"
 					sizes={getImageAttributes(index, imageCount).sizes}
 				/>
@@ -223,7 +229,7 @@
 						class="absolute inset-0 flex items-center justify-center bg-black/40 z-10 pointer-events-none"
 					>
 						<div
-							class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"
+							class="spinner-delayed w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"
 						></div>
 					</div>
 				{/if}
@@ -315,5 +321,29 @@
 	button:focus {
 		outline: 2px solid white;
 		outline-offset: 2px;
+	}
+
+	/* Delayed spinner - only shows after 200ms to avoid flash on instant loads */
+	.spinner-delayed {
+		opacity: 0;
+		animation: fadeInSpinner 0.1s ease-out 0.2s forwards, spin 0.6s linear 0.2s infinite;
+	}
+
+	@keyframes fadeInSpinner {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>
