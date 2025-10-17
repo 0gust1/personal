@@ -43,6 +43,22 @@
 		3: 2
 	} as const;
 
+	// Explicit class mappings for Tailwind JIT compiler
+	const COL_SPAN_CLASSES: Record<ColSpan, string> = {
+		1: 'col-span-1',
+		2: 'col-span-2',
+		3: 'col-span-3',
+		4: 'col-span-4',
+		5: 'col-span-5',
+		6: 'col-span-6'
+	} as const;
+
+	const ROW_SPAN_CLASSES: Record<number, string> = {
+		1: 'row-span-1',
+		2: 'row-span-2',
+		3: 'row-span-3'
+	} as const;
+
 	const defaultColSpan = $derived(COLUMN_SPAN_MAP[columns]);
 
 	// Detect image orientation based on aspect ratio
@@ -85,12 +101,12 @@
 			classes += ' aspect-square';
 		}
 
-		// Apply column span
-		classes += ` col-span-${actualColSpan}`;
+		// Apply column span using explicit class mapping
+		classes += ` ${COL_SPAN_CLASSES[actualColSpan]}`;
 
 		// Apply row span if greater than 1
 		if (actualRowSpan > 1) {
-			classes += ` row-span-${actualRowSpan}`;
+			classes += ` ${ROW_SPAN_CLASSES[actualRowSpan]}`;
 		}
 
 		// Adjust sizes based on column span for optimal image loading (accounts for 2x DPR)
