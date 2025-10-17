@@ -323,7 +323,7 @@
 
 	/* Picture items maintain consistent aspect ratio containers */
 	.picture-item {
-		@apply relative h-full w-full;
+		@apply relative h-full w-full bg-gray-400/50;
 	}
 
 	/* Aspect ratio classes based on image orientation */
