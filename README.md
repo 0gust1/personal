@@ -31,7 +31,26 @@ npm ci && npm run dev
 npm ci && npm run build && npm run preview
 ```
 
+## Helper Scripts
+
+The `scripts/` folder contains utilities for content management:
+
+- **create-content.ts** - Scaffold new posts/logs with proper structure
+- **generate-alt-text.ts** - AI-powered alt text generation for accessibility
+- **check-and-cleanup-images.ts** - Find and remove unused images
+
+**Quick examples:**
+
+```bash
+# Create new content
+./scripts/create-content.ts post "My New Blog Post"
+
+# Generate alt text (needs Ollama)
+./scripts/generate-alt-text.ts --apply
+```
+
+📖 **See [scripts/README.md](scripts/README.md) for detailed documentation**
+
 ## Specifics
 
-Images and image optimization:
-https://kit.svelte.dev/docs/images
+Images and image optimization: <https://kit.svelte.dev/docs/images>

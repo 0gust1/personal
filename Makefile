@@ -89,6 +89,22 @@ format-check: ## Check code formatting
 	fi
 
 # Content Management
+.PHONY: new-post
+new-post: ## Create a new blog post (usage: make new-post TITLE="My Post Title")
+	@if [ -z "$(TITLE)" ]; then \
+		echo "Error: TITLE is required. Usage: make new-post TITLE=\"My Post Title\""; \
+		exit 1; \
+	fi
+	@./scripts/create-content.ts post "$(TITLE)"
+
+.PHONY: new-log
+new-log: ## Create a new log entry (usage: make new-log TITLE="My Log Title")
+	@if [ -z "$(TITLE)" ]; then \
+		echo "Error: TITLE is required. Usage: make new-log TITLE=\"My Log Title\""; \
+		exit 1; \
+	fi
+	@./scripts/create-content.ts log "$(TITLE)"
+
 .PHONY: content-stats
 content-stats: ## Show content statistics
 	@echo "Content Statistics:"
@@ -100,14 +116,14 @@ content-stats: ## Show content statistics
 
 .PHONY: extract-images
 extract-images: ## Run image extraction and cleanup script (interactive)
-	@if [ -f "extract-and-cleanup-images.ts" ]; then \
+	@if [ -f "scripts/check-and-cleanup-images.ts" ]; then \
 		echo "Image extraction script found."; \
-		echo "Usage: ./extract-and-cleanup-images.ts <markdown_file_or_pattern> [--dry-run]"; \
+		echo "Usage: ./scripts/check-and-cleanup-images.ts <markdown_file_or_pattern> [--dry-run]"; \
 		echo ""; \
 		echo "Examples:"; \
-		echo "  Single file: ./extract-and-cleanup-images.ts src/content/posts/my-post.md --dry-run"; \
-		echo "  Multiple files: ./extract-and-cleanup-images.ts \"src/content/posts/**/*.md\" --dry-run"; \
-		echo "  Pattern: ./extract-and-cleanup-images.ts src/content/posts/2025-*/*.md"; \
+		echo "  Single file: ./scripts/check-and-cleanup-images.ts src/content/posts/my-post.md --dry-run"; \
+		echo "  Multiple files: ./scripts/check-and-cleanup-images.ts \"src/content/posts/**/*.md\" --dry-run"; \
+		echo "  Pattern: ./scripts/check-and-cleanup-images.ts src/content/posts/2025-*/*.md"; \
 		echo ""; \
 		echo "The script will automatically detect image folders referenced in the markdown files."; \
 	else \
@@ -118,7 +134,7 @@ extract-images: ## Run image extraction and cleanup script (interactive)
 extract-images-dry: ## Run image extraction in dry-run mode for a specific file or pattern
 	@read -p "Enter markdown file path or pattern: " md_pattern; \
 	if [ -n "$$md_pattern" ]; then \
-		./extract-and-cleanup-images.ts "$$md_pattern" --dry-run; \
+		./scripts/check-and-cleanup-images.ts "$$md_pattern" --dry-run; \
 	else \
 		echo "No pattern provided"; \
 	fi
@@ -126,9 +142,9 @@ extract-images-dry: ## Run image extraction in dry-run mode for a specific file 
 .PHONY: extract-images-all
 extract-images-all: ## Run image extraction on all markdown files in posts and logs
 	@echo "Running image extraction on all posts and logs..."
-	@./extract-and-cleanup-images.ts "src/content/posts/**/*.md" --dry-run
+	@./scripts/check-and-cleanup-images.ts "src/content/posts/**/*.md" --dry-run
 	@echo ""
-	@./extract-and-cleanup-images.ts "src/content/logs/**/*.md" --dry-run
+	@./scripts/check-and-cleanup-images.ts "src/content/logs/**/*.md" --dry-run
 
 # Utility Commands
 .PHONY: info

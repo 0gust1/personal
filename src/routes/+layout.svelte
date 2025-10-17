@@ -107,7 +107,7 @@
 		>
 	</p>
 	<p class="ml-auto">
-		<a href="./rss.xml">RSS Feed</a>
+		<a href="/rss.xml">RSS Feed</a>
 	</p>
 </footer>
 
@@ -133,7 +133,7 @@
 	}
 	.site-footer {
 		@apply flex;
-		@apply px-2 py-2 mt-12;
+		@apply px-2 pt-2 pb-12 mt-48;
 		@apply border-t border-stone-500 border-opacity-10;
 		@apply text-stone-400 text-xs;
 	}
