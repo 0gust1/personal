@@ -309,7 +309,9 @@ The script fits nicely into your content creation workflow:
 
 ```bash
 # 1. Create new content
-./create-content.ts post "My Adventure"
+```bash
+# 1. Create new content
+./scripts/create-content.ts post "My Adventure"
 
 # 2. Write content and add images
 # ... edit your markdown file ...
@@ -318,6 +320,7 @@ The script fits nicely into your content creation workflow:
 ./scripts/generate-alt-text.ts --apply
 
 # 4. Review and commit
+```
 git add .
 git commit -m "Add new post with accessible images"
 ```

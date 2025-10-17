@@ -15,11 +15,11 @@ const colors = {
 type ContentType = 'post' | 'log';
 
 function usage(): void {
-  console.log('Usage: ./create-content.ts <type> <title>');
+  console.log('Usage: ./scripts/create-content.ts <type> <title>');
   console.log('  type: "post" or "log"');
   console.log('  title: Title of the content (use quotes if it contains spaces)');
   console.log('');
-  console.log('Example: ./create-content.ts post "My First Blog Post"');
+  console.log('Example: ./scripts/create-content.ts post "My First Blog Post"');
   process.exit(1);
 }
 

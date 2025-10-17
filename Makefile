@@ -89,6 +89,22 @@ format-check: ## Check code formatting
 	fi
 
 # Content Management
+.PHONY: new-post
+new-post: ## Create a new blog post (usage: make new-post TITLE="My Post Title")
+	@if [ -z "$(TITLE)" ]; then \
+		echo "Error: TITLE is required. Usage: make new-post TITLE=\"My Post Title\""; \
+		exit 1; \
+	fi
+	@./scripts/create-content.ts post "$(TITLE)"
+
+.PHONY: new-log
+new-log: ## Create a new log entry (usage: make new-log TITLE="My Log Title")
+	@if [ -z "$(TITLE)" ]; then \
+		echo "Error: TITLE is required. Usage: make new-log TITLE=\"My Log Title\""; \
+		exit 1; \
+	fi
+	@./scripts/create-content.ts log "$(TITLE)"
+
 .PHONY: content-stats
 content-stats: ## Show content statistics
 	@echo "Content Statistics:"

@@ -33,6 +33,25 @@ npm ci && npm run build && npm run preview
 
 ## Helper Scripts
 
+### Create New Content
+
+Quickly scaffold new blog posts or logs with proper structure and frontmatter:
+
+```bash
+# Create a new post
+./scripts/create-content.ts post "My New Blog Post"
+
+# Create a new log entry
+./scripts/create-content.ts log "Quick Update"
+```
+
+The script will:
+
+- Generate a date-prefixed folder structure (`YYYY-MM-DD_slug`)
+- Create a markdown file from template with proper frontmatter
+- Set up a `files/` directory for assets
+- Slugify the title (max 20 characters)
+
 ### Generate Alt Text with AI
 
 Use Ollama to automatically generate alt text for images in your content:

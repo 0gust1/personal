@@ -1,16 +1,47 @@
-# Alt Text Generator Script
+# Helper Scripts
 
-## Summary
+This folder contains utility scripts for content management and workflow automation.
 
-✅ **Created**: `scripts/generate-alt-text.ts`  
-✅ **Documentation**: `scripts/ALT_TEXT_GUIDE.md`  
-✅ **README updated**: Usage examples added  
+## Available Scripts
 
-## What It Does
+### 1. Content Creation Script
+
+**File**: `create-content.ts`
+
+Quickly scaffold new blog posts or logs with proper structure and frontmatter.
+
+#### Usage
+
+```bash
+# Create a new post
+./scripts/create-content.ts post "My New Blog Post"
+
+# Create a new log entry
+./scripts/create-content.ts log "Quick Update"
+
+# Via Makefile
+make new-post TITLE="My New Blog Post"
+make new-log TITLE="Quick Update"
+```
+
+#### What It Does
+
+- - Generates a date-prefixed folder structure (`YYYY-MM-DD_slug`)
+- - Creates a markdown file from template with proper frontmatter
+- - Sets up a `files/` directory for assets
+- - Slugifies the title (max 20 characters, URL-safe)
+- - Checks for existing directories to prevent overwrites
+
+---
+
+### 2. Alt Text Generator Script
+
+**File**: `generate-alt-text.ts`
 
 Automatically generates descriptive alt text for images in your markdown content using:
+
 - **Ollama** (local AI, no cloud services)
-- **Vision models** (llava or llava-phi3)
+- **Vision models** (qwen2.5vl:latest, genma3, llava or llava-phi3)
 - **Language-aware prompts** (auto-detects EN/FR from frontmatter)
 
 ## Quick Start
@@ -97,13 +128,15 @@ title: Mon article
 lang: en                             ← Generates English alt text
 title: My Article
 ---
+```yaml
+lang: en                             ← Generates English alt text
 ```
 
 Override with `--lang fr` or `--lang en` if needed.
 
 ## Example Output
 
-```
+```text
 🖼️  Alt Text Generator
 Mode: interactive
 Language: auto
