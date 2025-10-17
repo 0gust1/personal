@@ -6,8 +6,8 @@
  * Analyzes markdown files to find unused images in associated folders,
  * providing detailed reports and optional cleanup functionality.
  * 
- * Usage: ./extract-and-cleanup-images.ts <pattern> [--dry-run]
- * Example: ./extract-and-cleanup-images.ts "src/content/posts/glob-pattern.md" --dry-run
+ * Usage: ./scripts/check-and-cleanup-images.ts <pattern> [--dry-run]
+ * Example: ./scripts/check-and-cleanup-images.ts "src/content/posts/glob-pattern.md" --dry-run
  */
 
 import { readFile, stat, readdir } from 'fs/promises';
@@ -437,7 +437,7 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
-    console.log('Usage: ./extract-and-cleanup-images.ts <pattern> [--dry-run]');
+    console.log('Usage: ./scripts/check-and-cleanup-images.ts <pattern> [--dry-run]');
     console.log('');
     console.log('Analyze markdown files for unused images and optionally clean them up.');
     console.log('');
@@ -447,14 +447,14 @@ async function main() {
     console.log('  --help, -h    Show this help message');
     console.log('');
     console.log('Examples:');
-    console.log('  ./extract-and-cleanup-images.ts "src/content/posts/**/*.md" --dry-run');
-    console.log('  ./extract-and-cleanup-images.ts "src/content/posts/2023-*/*.md"');
+    console.log('  ./scripts/check-and-cleanup-images.ts "src/content/posts/**/*.md" --dry-run');
+    console.log('  ./scripts/check-and-cleanup-images.ts "src/content/posts/2023-*/*.md"');
     process.exit(0);
   }
   
   if (args.length === 0) {
-    console.log('Usage: ./extract-and-cleanup-images.ts <pattern> [--dry-run]');
-    console.log('Example: ./extract-and-cleanup-images.ts "src/content/posts/**/*.md" --dry-run');
+    console.log('Usage: ./scripts/check-and-cleanup-images.ts <pattern> [--dry-run]');
+    console.log('Example: ./scripts/check-and-cleanup-images.ts "src/content/posts/**/*.md" --dry-run');
     console.log('Use --help for more information.');
     process.exit(1);
   }

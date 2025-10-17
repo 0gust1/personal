@@ -34,7 +34,42 @@ make new-log TITLE="Quick Update"
 
 ---
 
-### 2. Alt Text Generator Script
+### 2. Image Cleanup Script
+
+**File**: `check-and-cleanup-images.ts`
+
+Analyzes markdown files to find unused images in associated folders, providing detailed reports and optional cleanup functionality.
+
+#### How to Use
+
+```bash
+# Analyze a single file (dry-run)
+./scripts/check-and-cleanup-images.ts "src/content/posts/my-post/my-post.md" --dry-run
+
+# Analyze all posts (dry-run)
+./scripts/check-and-cleanup-images.ts "src/content/posts/**/*.md" --dry-run
+
+# Analyze with pattern (dry-run)
+./scripts/check-and-cleanup-images.ts "src/content/posts/2025-*/*.md" --dry-run
+
+# Via Makefile
+make extract-images          # Show usage instructions
+make extract-images-dry      # Interactive mode for specific pattern
+make extract-images-all      # Analyze all posts and logs
+```
+
+#### Features
+
+- ✅ Finds all images in folders associated with markdown files
+- ✅ Detects multiple image reference formats (markdown, HTML, `<enhanced:img>`, PictureGrid)
+- ✅ Identifies unused images that can be safely deleted
+- ✅ Reports total size of unused images
+- ✅ Safe dry-run mode by default
+- ✅ Supports glob patterns for batch analysis
+
+---
+
+### 3. Alt Text Generator Script
 
 **File**: `generate-alt-text.ts`
 
