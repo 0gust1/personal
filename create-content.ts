@@ -85,7 +85,7 @@ async function main(): Promise<void> {
 
   // Set base directory based on type
   const baseDir = `src/content/${type}s`;
-  const targetDir = join(baseDir, date);
+  const targetDir = join(baseDir, `${date}` + (slug ? `_${slug}` : ''));
 
   // Check if directory already exists
   if (existsSync(targetDir)) {
