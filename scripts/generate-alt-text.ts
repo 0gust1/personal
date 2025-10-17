@@ -1,13 +1,72 @@
 #!/usr/bin/env node --experimental-strip-types
 
-import { readdir, readFile, writeFile } from 'fs/promises';
-import { join, relative, resolve, dirname } from 'path';
+import { readdir, readFile, writeFile, mkdir, rm } from 'fs/promises';
+import { join, relative, resolve, dirname, basename } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { existsSync } from 'fs';
 import { createInterface } from 'readline';
+import { tmpdir } from 'os';
+import sharp from 'sharp';
 
 const execAsync = promisify(exec);
+
+// Global temporary directory for scaled images
+let TEMP_DIR: string | null = null;
+
+// Create temporary directory for scaled images
+async function createTempDir(): Promise<string> {
+  const tempPath = join(tmpdir(), `alt-text-gen-${Date.now()}`);
+  await mkdir(tempPath, { recursive: true });
+  TEMP_DIR = tempPath;
+  console.log(`${colors.cyan}📁 Created temporary directory: ${tempPath}${colors.reset}`);
+  return tempPath;
+}
+
+// Clean up temporary directory
+async function cleanupTempDir(): Promise<void> {
+  if (TEMP_DIR && existsSync(TEMP_DIR)) {
+    try {
+      await rm(TEMP_DIR, { recursive: true, force: true });
+      console.log(`${colors.cyan}🧹 Cleaned up temporary directory${colors.reset}`);
+      TEMP_DIR = null;
+    } catch (error: any) {
+      console.warn(`${colors.yellow}⚠️  Failed to cleanup temp directory: ${error.message}${colors.reset}`);
+    }
+  }
+}
+
+// Scale image to temporary file
+async function scaleImageToTemp(imagePath: string, maxDimension: number = 512): Promise<string> {
+  if (!TEMP_DIR) {
+    throw new Error('Temporary directory not initialized');
+  }
+  
+  const tempFileName = `scaled-${Date.now()}-${basename(imagePath)}`;
+  const tempPath = join(TEMP_DIR, tempFileName);
+  
+  // Read image metadata to get dimensions
+  const metadata = await sharp(imagePath).metadata();
+  const { width = 0, height = 0 } = metadata;
+  
+  // Only scale if image is larger than maxDimension
+  if (width <= maxDimension && height <= maxDimension) {
+    // Image is already small enough, just copy it
+    const buffer = await sharp(imagePath).toBuffer();
+    await writeFile(tempPath, buffer);
+    return tempPath;
+  }
+  
+  // Scale image maintaining aspect ratio
+  await sharp(imagePath)
+    .resize(maxDimension, maxDimension, {
+      fit: 'inside',
+      withoutEnlargement: true
+    })
+    .toFile(tempPath);
+  
+  return tempPath;
+}
 
 // ANSI color codes
 const colors = {
@@ -223,20 +282,22 @@ async function generateAltText(
   const prompt = PROMPTS[language === 'auto' ? 'en' : language];
   
   try {
-    // Read image file and convert to base64 using Node.js (handles large files better)
+    // Scale image to temporary file (max 1024px)
+    const scaledImagePath = await scaleImageToTemp(imagePath, 1024);
+    
+    // Read scaled image file and convert to base64
     const { readFile: fsReadFile, stat } = await import('fs/promises');
     const { writeFile: fsTempWrite, unlink: fsTempUnlink } = await import('fs/promises');
-    const { tmpdir } = await import('os');
     
-    // Check file size
-    const stats = await stat(imagePath);
+    // Check scaled file size
+    const stats = await stat(scaledImagePath);
     const fileSizeMB = stats.size / (1024 * 1024);
     
-    if (fileSizeMB > 10) {
-      console.warn(`${colors.yellow}⚠️  Large image (${fileSizeMB.toFixed(1)}MB), this may take longer...${colors.reset}`);
+    if (fileSizeMB > 5) {
+      console.warn(`${colors.yellow}⚠️  Scaled image still large (${fileSizeMB.toFixed(1)}MB), this may take longer...${colors.reset}`);
     }
     
-    const imageBuffer = await fsReadFile(imagePath);
+    const imageBuffer = await fsReadFile(scaledImagePath);
     const base64Image = imageBuffer.toString('base64');
     
     const requestBody = JSON.stringify({
@@ -416,47 +477,74 @@ async function updateAltText(img: ImageReference, newAlt: string): Promise<void>
   const lines = content.split('\n');
   const line = lines[img.lineNumber - 1];
   
+  // Escape HTML entities for HTML/XML attributes
+  // We need to escape: " & < >
+  // We DON'T escape: ' - = [ ] (these are safe in HTML attributes)
+  const escapeHtmlAttr = (text: string): string => {
+    return text
+      .replace(/&/g, '&amp;')   // Ampersand must be first
+      .replace(/"/g, '&quot;')  // Double quotes
+      .replace(/</g, '&lt;')    // Less than
+      .replace(/>/g, '&gt;');   // Greater than
+  };
+  
+  // Escape for JavaScript string literals (used in PictureGrid)
+  // We need to escape: " \ and control characters
+  const escapeJsString = (text: string): string => {
+    return text
+      .replace(/\\/g, '\\\\')   // Backslash must be first
+      .replace(/"/g, '\\"')     // Double quotes
+      .replace(/\n/g, '\\n')    // Newlines
+      .replace(/\r/g, '\\r')    // Carriage returns
+      .replace(/\t/g, '\\t');   // Tabs
+  };
+  
   let updatedLine: string;
   
   switch (img.matchType) {
     case 'markdown':
       // Replace ![old](src) with ![new](src)
+      // Markdown doesn't need special escaping, use original text
+      // Note: If alt text contains ']' it could break, but that's rare and markdown-specific
       updatedLine = line.replace(/!\[.*?\]/, `![${newAlt}]`);
       break;
       
     case 'html':
-      // Add or replace alt attribute in <img> tag
-      // Use negative lookahead to properly match quoted strings (handles apostrophes)
+      // Add or replace alt attribute in <img> tag (HTML context)
+      // Use HTML entity escaping
+      const htmlEscaped = escapeHtmlAttr(newAlt);
       if (line.match(/\balt=(["'])((?:(?!\1).)*?)\1/)) {
-        updatedLine = line.replace(/\balt=(["'])((?:(?!\1).)*?)\1/, `alt="${newAlt}"`);
+        updatedLine = line.replace(/\balt=(["'])((?:(?!\1).)*?)\1/, `alt="${htmlEscaped}"`);
       } else {
-        updatedLine = line.replace(/<img/, `<img alt="${newAlt}"`);
+        updatedLine = line.replace(/<img/, `<img alt="${htmlEscaped}"`);
       }
       break;
       
     case 'enhanced':
-      // Add or replace alt attribute in <enhanced:img> tag
-      // Use negative lookahead to properly match quoted strings (handles apostrophes)
+      // Add or replace alt attribute in <enhanced:img> tag (Svelte/HTML context)
+      // Use HTML entity escaping
+      const enhancedEscaped = escapeHtmlAttr(newAlt);
       if (line.match(/\balt=(["'])((?:(?!\1).)*?)\1/)) {
-        updatedLine = line.replace(/\balt=(["'])((?:(?!\1).)*?)\1/, `alt="${newAlt}"`);
+        updatedLine = line.replace(/\balt=(["'])((?:(?!\1).)*?)\1/, `alt="${enhancedEscaped}"`);
       } else {
         // Insert alt before the closing />
-        updatedLine = line.replace(/\s*\/>/, ` alt="${newAlt}" />`);
+        updatedLine = line.replace(/\s*\/>/, ` alt="${enhancedEscaped}" />`);
       }
       break;
       
     case 'picturegrid':
-      // Replace alt in PictureGrid component image object
-      // Use negative lookahead to properly match quoted strings (handles apostrophes and empty strings)
+      // Replace alt in PictureGrid component image object (JavaScript string literal context)
+      // Use JavaScript string escaping
+      const jsEscaped = escapeJsString(newAlt);
       if (line.match(/\balt:\s*(["'])((?:(?!\1).)*?)\1/)) {
         // Alt exists, replace it
         updatedLine = line.replace(
           /\balt:\s*(["'])((?:(?!\1).)*?)\1/,
-          `alt: "${newAlt}"`
+          `alt: "${jsEscaped}"`
         );
       } else {
         // Alt doesn't exist, add it before the closing }
-        updatedLine = line.replace(/\s*}/, `, alt: "${newAlt}"}`);
+        updatedLine = line.replace(/\s*}/, `, alt: "${jsEscaped}"}`);
       }
       break;
       
@@ -515,6 +603,11 @@ function usage(): void {
   console.log('');
   console.log('  # Replace all existing alt texts');
   console.log('  ./scripts/generate-alt-text.ts --replace-existing --apply');
+  console.log('');
+  console.log('Performance:');
+  console.log('  - Images are automatically scaled to max 1024px before processing');
+  console.log('  - Scaled images are stored in temporary directory (auto-cleaned)');
+  console.log('  - Source images are never modified');
   console.log('');
   console.log('Prerequisites:');
   console.log('  - Ollama installed: brew install ollama');
@@ -655,14 +748,52 @@ async function main() {
     process.exit(1);
   }
   
-  if (options.mode === 'interactive') {
-    await interactiveMode(allImages, options);
-  } else {
-    await batchMode(allImages, options);
+  // Create temporary directory for scaled images
+  await createTempDir();
+  
+  // Setup cleanup handlers
+  const cleanup = async () => {
+    await cleanupTempDir();
+  };
+  
+  process.on('exit', () => {
+    // Sync cleanup on exit
+    if (TEMP_DIR && existsSync(TEMP_DIR)) {
+      try {
+        const { execSync } = require('child_process');
+        execSync(`rm -rf "${TEMP_DIR}"`, { stdio: 'ignore' });
+      } catch {
+        // Ignore errors during exit cleanup
+      }
+    }
+  });
+  
+  process.on('SIGINT', async () => {
+    console.log(`\n${colors.yellow}⚠️  Interrupted by user${colors.reset}`);
+    await cleanup();
+    process.exit(130);
+  });
+  
+  process.on('SIGTERM', async () => {
+    console.log(`\n${colors.yellow}⚠️  Terminated${colors.reset}`);
+    await cleanup();
+    process.exit(143);
+  });
+  
+  try {
+    if (options.mode === 'interactive') {
+      await interactiveMode(allImages, options);
+    } else {
+      await batchMode(allImages, options);
+    }
+  } finally {
+    // Always cleanup temp directory
+    await cleanup();
   }
 }
 
-main().catch((error) => {
+main().catch(async (error) => {
   console.error(`${colors.red}Fatal error:${colors.reset}`, error);
+  await cleanupTempDir();
   process.exit(1);
 });

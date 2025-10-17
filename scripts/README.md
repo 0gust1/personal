@@ -102,6 +102,10 @@ make generate-alt-apply         # Interactive with changes
 #### Common Use Cases
 
 ```bash
+
+# run on a specific folder, non-interactive, and replace existing alt texts
+./scripts/generate-alt-text.ts --dir src/content/logs/2025-09-27_weppes-auriferes --model qwen2.5vl --batch --apply --replace-existing
+
 # Review each suggestion before applying
 ./scripts/generate-alt-text.ts --apply
 
