@@ -62,5 +62,8 @@
 		"vite-plugin-glsl": "^1.1.2",
 		"vitest": "^3.2.4"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@sindresorhus/slugify": "^3.0.0"
+	}
 }
