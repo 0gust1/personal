@@ -1,18 +1,12 @@
-# 0gust1 - website - sveltekit
+# 0gust1 - website
 
-I stole some code and ideas from those 2 projects:
-
-- https://github.com/mattjennings/sveltekit-blog-template
-- https://github.com/mvasigh/sveltekit-mdsvex-blog
-
-I changed some things to make it more to my liking, and added some features.
-
-You're free to use and adapt this code as you see fit.
+A Sveltekit-powered static website generator.
 
 ## Features
 
 - Static website, no server runtime needed.
 - Content is written in markdown, with special powers thanks to [mdsvex](https://mdsvex.com/).
+- Optimized images, powerful image layouting component, lightbox-like image gallery.
 - RSS feeds are great, RSS is not dead.
 
 ## Run
