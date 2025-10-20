@@ -20,6 +20,19 @@
 		return 'lg';
 	};
 
+	// Separate series (serie/ tags) from regular topics
+	const seriesTags = $derived(
+		data.tagsInfo.tags
+			.filter((tagAcc) => tagAcc.tag.startsWith('serie/'))
+			.map((tagAcc) => ({
+				...tagAcc,
+				displayName: tagAcc.tag.replace('serie/', '')
+			}))
+	);
+	const topicTags = $derived(
+		data.tagsInfo.tags.filter((tagAcc) => !tagAcc.tag.startsWith('serie/'))
+	);
+
 	const locale = 'fr';
 </script>
 
@@ -39,7 +52,7 @@
 		<h2 class="topics">Topics</h2>
 		<div>
 			<ul class="topics-list">
-				{#each data.tagsInfo.tags as tagAcc}
+				{#each topicTags as tagAcc}
 					<li
 						class=" text-eigengrau-500/70 dark:text-cosmiclatte-100/50 tag-{getTagSize(
 							tagAcc.count
@@ -57,6 +70,25 @@
 				{/each}
 			</ul>
 		</div>
+				{#if seriesTags.length > 0}
+			<h2 class="topics">Series</h2>
+			<div>
+				<ul class="series-list">
+					{#each seriesTags as tagAcc}
+						<li class="text-eigengrau-500/70 dark:text-cosmiclatte-100/50">
+							<a href="/topics/{encodeURIComponent(tagAcc.tag)}" class="">
+								{tagAcc.displayName}
+								{#if tagAcc.count > 1}
+									<span class="tag-count">
+										({tagAcc.count})
+									</span>
+								{/if}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 	</div>
 </div>
 {#if dev}
@@ -86,6 +118,10 @@
 		h3 {
 			@apply text-sm leading-5 mb-1 font-semibold;
 		}
+	}
+	.series-list {
+		@apply flex flex-col gap-1 mb-4;
+		@apply text-sm leading-5;
 	}
 	.topics-list {
 		@apply flex flex-wrap gap-2 items-baseline;
