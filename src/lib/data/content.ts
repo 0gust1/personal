@@ -8,9 +8,12 @@ import { slugFromPath, urlFromPath } from '$lib/slugFromPath';
 let allContentMetadata: App.BlogPost[] = [];
 let allContentComponentResolvers: Record<string, App.MdsvexResolver> = {};
 
-const postTypeFromPath = (path: string) => {
-	const type = path.match(/\/src\/content\/(\w+)\//i)?.[1] ?? null;
-	return type;
+const postTypeFromPath = (path: string): App.ContentType | null => {
+	const type = path.match(/\/src\/content\/(\w+)\//i)?.[1];
+	if (type === 'posts' || type === 'logs') {
+		return type;
+	}
+	return null;
 };
 
 /**
@@ -26,11 +29,11 @@ const postTypeFromPath = (path: string) => {
 //   return import.meta.glob(`/src/logs/**/*.{md,svx,svelte.md}`);
 // };
 
-export const getAllContentFromSource = async () => {
+export const getAllContentFromSource = async (): Promise<Record<string, App.MdsvexResolver>> => {
 	return import.meta.glob([
 		'/src/content/posts/**/*.{md,svx,svelte.md}',
 		'/src/content/logs/**/*.{md,svx,svelte.md}'
-	]) as unknown as Promise<Record<string, App.MdsvexResolver>>;
+	]) as unknown as Record<string, App.MdsvexResolver>;
 };
 
 /**
@@ -38,25 +41,36 @@ export const getAllContentFromSource = async () => {
  * @param modules
  * @returns
  */
-const contentMetadataFromModules = (modules: Record<string, () => Promise<unknown>>) => {
+const contentMetadataFromModules = (modules: Record<string, App.MdsvexResolver>): Promise<App.BlogPost>[] => {
 	return Object.entries(modules).map(([path, resolver]) =>
 		resolver().then(
-			(post) =>
-				({
-					type: postTypeFromPath(path),
-					slug: slugFromPath(path),
+			(post): App.BlogPost => {
+				const type = postTypeFromPath(path);
+				const slug = slugFromPath(path);
+				
+				if (!type) {
+					throw new Error(`Invalid content path: ${path}`);
+				}
+				if (!slug) {
+					throw new Error(`Could not extract slug from path: ${path}`);
+				}
+				
+				return {
+					type,
+					slug,
 					originalContentPath: path,
 					contentURL: `${base}${urlFromPath(path)}`,
-					...(post as unknown as App.MdsvexFile).metadata
-				}) as App.BlogPost
+					...post.metadata
+				};
+			}
 		)
 	);
 };
 
 export const getPublishedContentMetadata = async (
 	contentModulesPromises: Record<string, App.MdsvexResolver>
-) => {
-	const contentPromises = contentMetadataFromModules(await contentModulesPromises);
+): Promise<App.BlogPost[]> => {
+	const contentPromises = contentMetadataFromModules(contentModulesPromises);
 	const all_content = await Promise.all(contentPromises);
 	const publishedContent = all_content.filter((content) => (dev ? true : content.published));
 	publishedContent.sort((a, b) => (new Date(a.date) > new Date(b.date) ? -1 : 1));
@@ -66,8 +80,8 @@ export const getPublishedContentMetadata = async (
 // function to get visible content (not hidden) - for navigation/RSS only
 export const getVisibleContentMetadata = async (
 	contentModulesPromises: Record<string, App.MdsvexResolver>
-) => {
-	const contentPromises = contentMetadataFromModules(await contentModulesPromises);
+): Promise<App.BlogPost[]> => {
+	const contentPromises = contentMetadataFromModules(contentModulesPromises);
 	const all_content = await Promise.all(contentPromises);
 	const publishedContent = all_content.filter((content) => (dev ? true : content.published));
 	// Include hidden content in dev mode
@@ -112,7 +126,17 @@ export const getVisibleContentMetadata = async (
 //   });
 // };
 
-export const getAllContentMetadata = async () => {
+interface TagCount {
+	tag: string;
+	count: number;
+}
+
+interface ContentMetadata {
+	tags: TagCount[];
+	meta: { total: number };
+}
+
+export const getAllContentMetadata = async (): Promise<ContentMetadata> => {
 	if (!allContentMetadata || allContentMetadata.length === 0) {
 		await loadAllContent();
 	}
@@ -122,8 +146,9 @@ export const getAllContentMetadata = async () => {
 				const contentTags = content.tags || [];
 				// check if one of the contenttTag is already in the accumulator
 				contentTags.forEach((contentTag) => {
-					if (acc.some((tagAcc) => tagAcc.tag === contentTag)) {
-						acc.find((tagAcc) => tagAcc.tag === contentTag).count++;
+					const existingTag = acc.find((tagAcc) => tagAcc.tag === contentTag);
+					if (existingTag) {
+						existingTag.count++;
 					} else {
 						acc.push({ tag: contentTag, count: 1 });
 					}
@@ -131,7 +156,7 @@ export const getAllContentMetadata = async () => {
 
 				return acc;
 			},
-			[] as { tag: string; count: number }[]
+			[] as TagCount[]
 		)
 		.sort((a, b) => (a.count < b.count ? 1 : -1));
 
@@ -140,14 +165,14 @@ export const getAllContentMetadata = async () => {
 
 ///-----
 // we load ALL published content (including hidden) for page generation
-const loadAllContent = async () => {
+const loadAllContent = async (): Promise<void> => {
 	allContentComponentResolvers = await getAllContentFromSource();
 	// Load ALL published content (including hidden) for page generation
 	allContentMetadata = await getPublishedContentMetadata(allContentComponentResolvers);
 };
 
 // Get all content of a specific type (posts or logs), excluding hidden content
-export const getAllContentOfType = async (type: 'posts' | 'logs') => {
+export const getAllContentOfType = async (type: App.ContentType): Promise<App.BlogPost[]> => {
 	if (!allContentMetadata || allContentMetadata.length === 0) {
 		await loadAllContent();
 	}
@@ -155,7 +180,7 @@ export const getAllContentOfType = async (type: 'posts' | 'logs') => {
 	return allContentMetadata.filter((content) => content.type === type && (dev || !content.hidden));
 };
 
-export const getAllContent = async () => {
+export const getAllContent = async (): Promise<App.BlogPost[]> => {
 	if (!allContentMetadata || allContentMetadata.length === 0) {
 		await loadAllContent();
 	}
@@ -164,7 +189,7 @@ export const getAllContent = async () => {
 };
 
 // Get all content for a specific topic (tag), excluding hidden content
-export const getContentByTopic = async (topic: string) => {
+export const getContentByTopic = async (topic: string): Promise<App.BlogPost[]> => {
 	if (!allContentMetadata || allContentMetadata.length === 0) {
 		await loadAllContent();
 	}
@@ -174,7 +199,12 @@ export const getContentByTopic = async (topic: string) => {
 	);
 };
 
-export const getContentByUrl = async (url: string) => {
+interface ContentByUrlResult {
+	component: import('svelte').SvelteComponent;
+	frontmatter: App.BlogPostMetadata;
+}
+
+export const getContentByUrl = async (url: string): Promise<ContentByUrlResult | null> => {
 	if (!allContentComponentResolvers || Object.keys(allContentComponentResolvers).length === 0) {
 		await loadAllContent();
 	}
@@ -182,7 +212,7 @@ export const getContentByUrl = async (url: string) => {
 	let match: { path?: string; resolver?: App.MdsvexResolver } = {};
 	for (const [path, resolver] of Object.entries(allContentComponentResolvers)) {
 		if (urlFromPath(path) === url) {
-			match = { path, resolver: resolver as unknown as App.MdsvexResolver };
+			match = { path, resolver };
 			break;
 		}
 	}

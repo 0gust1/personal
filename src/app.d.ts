@@ -6,15 +6,30 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface Platform {}
-		// interface MdsvexFile {
-		// 	default: import('svelte/internal').SvelteComponent;
-		// 	metadata: Record<string, string>;
-		// }
+		
+		interface MdsvexFile {
+			default: import('svelte').SvelteComponent;
+			metadata: BlogPostMetadata;
+		}
 
 		type MdsvexResolver = () => Promise<MdsvexFile>;
 
-		interface BlogPost {
-			type: string;
+		type ContentType = 'posts' | 'logs';
+
+		interface BlogPostMetadata {
+			title: string;
+			author?: string;
+			description?: string;
+			date: string;
+			tags?: string[];
+			published: boolean;
+			hidden?: boolean;
+			lang?: string;
+			updated_at?: string;
+		}
+
+		interface BlogPost extends BlogPostMetadata {
+			type: ContentType;
 			originalContentPath: string;
 			contentURL: string;
 			slug: string;
