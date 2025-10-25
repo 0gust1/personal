@@ -3,6 +3,7 @@
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { createInterface } from 'readline';
+import slugifyLib from '@sindresorhus/slugify';
 
 // ANSI color codes
 const colors = {
@@ -24,17 +25,13 @@ function usage(): void {
 }
 
 function slugify(text: string, maxLength: number = 20): string {
-  let slug = text
-    .toLowerCase()
-    .replace(/[^a-z0-9 -]/g, '') // Remove special characters
-    .replace(/\s+/g, '-')         // Replace spaces with hyphens
-    .replace(/-+/g, '-');         // Replace multiple hyphens with single hyphen
+  const slug = slugifyLib(text);
   
   // Truncate to maxLength
-  slug = slug.substring(0, maxLength);
+  const truncated = slug.substring(0, maxLength);
   
   // Remove trailing hyphen if present
-  return slug.replace(/-$/, '');
+  return truncated.replace(/-$/, '');
 }
 
 function getCurrentDate(): string {
