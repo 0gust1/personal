@@ -130,6 +130,17 @@
 	let dialogElement = $state<HTMLElement | null>(null);
 	let isImageLoading = $state(false);
 
+	// Touch/swipe state
+	let touchStartX = $state(0);
+	let touchStartY = $state(0);
+	let touchStartTime = $state(0);
+	let isSwiping = $state(false);
+	
+	// Swipe configuration
+	const SWIPE_THRESHOLD = 50; // Minimum distance for swipe
+	const SWIPE_MAX_TIME = 300; // Maximum time for swipe (ms)
+	const SWIPE_MAX_VERTICAL_DISTANCE = 100; // Max vertical movement to still count as horizontal swipe (user's horizontal swipe can be at an angle, so allow some vertical movement) 
+
 	function openLightbox(image: ImageData, index: number) {
 		selectedImage = image;
 		selectedIndex = index;
@@ -177,6 +188,62 @@
 		const handler = keyHandlers[event.key];
 		if (handler) handler();
 	}
+
+	// Touch event handlers for swipe navigation
+	function handleTouchStart(event: TouchEvent) {
+		if (!selectedImage || isImageLoading) return;
+		
+		const touch = event.touches[0];
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
+		touchStartTime = Date.now();
+		isSwiping = false;
+	}
+
+	function handleTouchMove(event: TouchEvent) {
+		if (!selectedImage || isImageLoading) return;
+		
+		const touch = event.touches[0];
+		const deltaX = Math.abs(touch.clientX - touchStartX);
+		const deltaY = Math.abs(touch.clientY - touchStartY);
+		
+		// If moving more horizontally than vertically, we might be swiping
+		if (deltaX > deltaY && deltaX > 10) {
+			isSwiping = true;
+			// Prevent default to avoid page scrolling during horizontal swipe
+			event.preventDefault();
+		}
+	}
+
+	function handleTouchEnd(event: TouchEvent) {
+		if (!selectedImage || isImageLoading || !isSwiping) {
+			isSwiping = false;
+			return;
+		}
+		
+		const touch = event.changedTouches[0];
+		const deltaX = touch.clientX - touchStartX;
+		const deltaY = Math.abs(touch.clientY - touchStartY);
+		const deltaTime = Date.now() - touchStartTime;
+		
+		// Check if this qualifies as a swipe
+		const isValidSwipe = 
+			Math.abs(deltaX) >= SWIPE_THRESHOLD && 
+			deltaY <= SWIPE_MAX_VERTICAL_DISTANCE && 
+			deltaTime <= SWIPE_MAX_TIME;
+		
+		if (isValidSwipe) {
+			if (deltaX > 0) {
+				// Swipe right -> go to previous image
+				navigatePrevious();
+			} else {
+				// Swipe left -> go to next image
+				navigateNext();
+			}
+		}
+		
+		isSwiping = false;
+	}
 </script>
 
 <!-- Keyboard event listener -->
@@ -213,10 +280,14 @@
 	<div
 		bind:this={dialogElement}
 		class="lightbox-overlay fixed inset-0 bg-black/70 z-50 flex items-center justify-center"
+		class:swiping={isSwiping}
 		onclick={closeLightbox}
 		onkeydown={(e) => {
 			if (e.key === 'Escape') closeLightbox();
 		}}
+		ontouchstart={handleTouchStart}
+		ontouchmove={handleTouchMove}
+		ontouchend={handleTouchEnd}
 		role="dialog"
 		aria-modal="true"
 		aria-label="Image lightbox"
@@ -361,10 +432,19 @@
 	.lightbox-overlay {
 		backdrop-filter: blur(2px);
 		animation: fadeIn 0.2s ease-out;
+		/* Enable hardware acceleration for smooth touch interactions */
+		transform: translateZ(0);
+	}
+
+	/* Subtle visual feedback during swipe */
+	.lightbox-overlay.swiping {
+		cursor: grabbing;
 	}
 
 	.lightbox-image-container {
 		animation: scaleIn 0.2s ease-out;
+		/* Optimize touch interactions - allow pan-x for swipe, but prevent other gestures */
+		touch-action: pan-x;
 	}
 
 	@keyframes fadeIn {
