@@ -30,6 +30,8 @@ import slugPlugin from 'rehype-slug';
 // generates a link for each heading who has an id
 import autolinkHeadings from 'rehype-autolink-headings';
 import rehypeAccessibleEmojis from 'rehype-accessible-emojis';
+// automatically add target="_blank" and rel="noopener noreferrer" to external links
+import rehypeExternalLinks from 'rehype-external-links';
 
 const config = defineConfig({
     extensions: ['.svelte.md', '.md', '.svx'],
@@ -44,6 +46,13 @@ const config = defineConfig({
         rehypeUnwrapImages,
         slugPlugin,
         rehypeGithubAlert,
+        [
+            rehypeExternalLinks,
+            {
+                target: '_blank',
+                rel: ['noopener', 'noreferrer']
+            }
+        ],
         [
             autolinkHeadings,
             {
