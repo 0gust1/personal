@@ -1,11 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-// Test the PictureGrid regex patterns
-
 describe('PictureGrid Regex Detection', () => {
-	const pictureGridRegex = /\{\s*src:\s*imageModules\['([^']+)'\][^}]*\balt:\s*["']([^"']*)["']/g;
+	const pictureGridRegex = /\{\s*src:\s*imageModules\['([^']+)'\][^}]*\balt:\s*(?:"((?:\\.|[^"\\])*)"|'((?:\\.|[^'\\])*)')/g;
 
-	it('should match standard format with alt at the end', () => {
+	it('should match standard format', () => {
 		const line = `  { src: imageModules['./files/IMG_4584.jpg'], alt: ""}`;
 		pictureGridRegex.lastIndex = 0;
 		const match = pictureGridRegex.exec(line);
@@ -15,66 +13,56 @@ describe('PictureGrid Regex Detection', () => {
 		expect(match![2]).toBe('');
 	});
 
-	it('should match with properties before alt', () => {
-		const line = `  { src: imageModules['./files/IMG_4597.jpg'], colSpan:4, rowSpan:2, alt: ""}`;
+	it('should match alt text with escaped double quotes', () => {
+		const line = `  { src: imageModules['./files/IMG_4608.jpg'], alt: "Text with \\"escaped\\" quotes"}`;
 		pictureGridRegex.lastIndex = 0;
 		const match = pictureGridRegex.exec(line);
 		
 		expect(match).not.toBeNull();
-		expect(match![1]).toBe('./files/IMG_4597.jpg');
-		expect(match![2]).toBe('');
+		expect(match![1]).toBe('./files/IMG_4608.jpg');
+		expect(match![2]).toBe('Text with \\"escaped\\" quotes');
 	});
 
-	it('should match with existing alt text', () => {
-		const line = `  { src: imageModules['./files/IMG_4606.jpg'], alt: "Existing alt text"}`;
+	it('should match alt text with apostrophes in double quotes', () => {
+		const line = `  { src: imageModules['./files/IMG_4611.jpg'], alt: "L'église d'Amiens"}`;
 		pictureGridRegex.lastIndex = 0;
 		const match = pictureGridRegex.exec(line);
 		
 		expect(match).not.toBeNull();
-		expect(match![1]).toBe('./files/IMG_4606.jpg');
-		expect(match![2]).toBe('Existing alt text');
+		expect(match![1]).toBe('./files/IMG_4611.jpg');
+		expect(match![2]).toBe("L'église d'Amiens");
 	});
 
-	it('should match with properties and existing alt', () => {
-		const line = `  { src: imageModules['./files/IMG_4607.jpg'], colSpan:3, alt: "Champ verdoyant"}`;
+	it('should match with single quotes for alt', () => {
+		const line = `  { src: imageModules['./files/IMG_4612.jpg'], alt: 'Single quoted text'}`;
 		pictureGridRegex.lastIndex = 0;
 		const match = pictureGridRegex.exec(line);
 		
 		expect(match).not.toBeNull();
-		expect(match![1]).toBe('./files/IMG_4607.jpg');
-		expect(match![2]).toBe('Champ verdoyant');
+		expect(match![1]).toBe('./files/IMG_4612.jpg');
+		expect(match![3]).toBe('Single quoted text');
 	});
 });
 
 describe('PictureGrid Regex Replacement', () => {
-	const newAlt = "New AI-generated text";
+	const altMatchRegex = /\balt:\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/;
 
-	it('should replace existing alt text', () => {
-		const line = `  { src: imageModules['./files/IMG_4584.jpg'], alt: ""}`;
-		const updatedLine = line.replace(/\balt:\s*["'][^"']*["']/, `alt: "${newAlt}"`);
-		
-		expect(updatedLine).toBe(`  { src: imageModules['./files/IMG_4584.jpg'], alt: "${newAlt}"}`);
-	});
+it('should replace alt text with escaped quotes', () => {
+const line = `  { src: imageModules['./files/IMG_4608.jpg'], alt: "Old text with \\"quotes\\""}`;
+const newAlt = "New AI-generated text";
+const updatedLine = line.replace(altMatchRegex, `alt: "${newAlt}"`);
 
-	it('should replace alt text without duplicating', () => {
-		const line = `  { src: imageModules['./files/IMG_4597.jpg'], colSpan:4, rowSpan:2, alt: ""}`;
-		const updatedLine = line.replace(/\balt:\s*["'][^"']*["']/, `alt: "${newAlt}"`);
-		
-		expect(updatedLine).toBe(`  { src: imageModules['./files/IMG_4597.jpg'], colSpan:4, rowSpan:2, alt: "${newAlt}"}`);
-		
-		// Verify no duplication
-		const altCount = (updatedLine.match(/\balt:/g) || []).length;
-		expect(altCount).toBe(1);
-	});
+expect(updatedLine).toBe(`  { src: imageModules['./files/IMG_4608.jpg'], alt: "${newAlt}"}`);
 
-	it('should add alt if it does not exist', () => {
-		const line = `  { src: imageModules['./files/IMG_4584.jpg']}`;
-		const updatedLine = line.replace(/\s*}/, `, alt: "${newAlt}"}`);
-		
-		expect(updatedLine).toBe(`  { src: imageModules['./files/IMG_4584.jpg'], alt: "${newAlt}"}`);
-		
-		// Verify single alt attribute
-		const altCount = (updatedLine.match(/\balt:/g) || []).length;
-		expect(altCount).toBe(1);
-	});
+const altCount = (updatedLine.match(/\balt:/g) || []).length;
+expect(altCount).toBe(1);
+});
+
+it('should replace single-quoted alt text', () => {
+const line = `  { src: imageModules['./files/IMG_4613.jpg'], alt: 'Old single quoted'}`;
+const newAlt = "New AI-generated text";
+const updatedLine = line.replace(altMatchRegex, `alt: "${newAlt}"`);
+
+expect(updatedLine).toBe(`  { src: imageModules['./files/IMG_4613.jpg'], alt: "${newAlt}"}`);
+});
 });

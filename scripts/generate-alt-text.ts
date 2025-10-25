@@ -102,8 +102,8 @@ interface Options {
 
 // Language prompts for Ollama
 const PROMPTS = {
-  en: `Describe this image in one clear, concise sentence for web accessibility (alt text). Focus on the main subject and key details. Be descriptive but brief. Answer in English only.`,
-  fr: `Décris cette image en une phrase claire et concise pour l'accessibilité web (texte alt). Concentre-toi sur le sujet principal et les détails clés. Sois descriptif mais bref. Réponds uniquement en français.`
+  en: `Describe this image for web accessibility (alt text). DO NOT START with "This image shows..." (DO NOT MENTION that it's an image, photo or picture). Focus on the main subject and key details, being brief. If the image contains text, transcribe it FULLY in the description. If relevant, provide a description of graphic composition and visual features. Respond only in English.`,
+  fr: `Décris cette image pour l'accessibilité web (texte alt). NE COMMENCE PAS avec "Cette image montre..." (NE PRÉCISE PAS qu'il s'agit d'une image ou d'une photo). Concentre-toi sur le sujet principal et les détails clés, en étant bref. Si l'image contient du texte, transcris-le ENTIÈREMENT dans la description. Si pertinent, donne une description de la composition graphique et des caractéristiques visuelles. Réponds uniquement en français.`
 };
 
 // Detect language from markdown frontmatter
@@ -141,8 +141,9 @@ async function findImagesInContent(contentDir: string, options: Options): Promis
     const enhancedImageRegex = /<enhanced:img[^>]+src=\{[^}]+\}(?:[^>]+alt=(["'])((?:(?!\1).)*?)\1)?[^>]*\/>/gi;
     
     // Match: PictureGrid component image objects: { src: imageModules['./path'], ... alt: "..." }
-    // Uses (?:(?!QUOTE).)* to match everything except the closing quote (supports apostrophes in French and empty strings)
-    const pictureGridRegex = /\{\s*src:\s*imageModules\['([^']+)'\][^}]*\balt:\s*(["'])((?:(?!\2).)*?)\2/g;
+    // Match double-quoted: (?:\\.|[^"\\])*  OR single-quoted: (?:\\.|[^'\\])*
+    // This pattern matches either: escaped characters (\\.) OR any char except the quote/backslash
+    const pictureGridRegex = /\{\s*src:\s*imageModules\['([^']+)'\][^}]*\balt:\s*(?:"((?:\\.|[^"\\])*)"|'((?:\\.|[^'\\])*)')/g;
     
     lines.forEach((line, index) => {
       const lineNumber = index + 1;
@@ -223,9 +224,11 @@ async function findImagesInContent(contentDir: string, options: Options): Promis
       // Check PictureGrid component images
       const pictureGridRegex2 = new RegExp(pictureGridRegex);
       while ((match = pictureGridRegex2.exec(line)) !== null) {
-        // match[1] = path/to/image.jpg, match[2] = opening quote for alt, match[3] = alt value
+        // match[1] = path/to/image.jpg
+        // match[2] = alt value (if double-quoted)
+        // match[3] = alt value (if single-quoted)
         const relativePath = match[1];
-        const alt = match[3] || '';
+        const alt = match[2] !== undefined ? match[2] : (match[3] || '');
         const shouldInclude = options.replaceExisting || 
                              !alt || 
                              alt.trim() === '' || 
@@ -282,8 +285,8 @@ async function generateAltText(
   const prompt = PROMPTS[language === 'auto' ? 'en' : language];
   
   try {
-    // Scale image to temporary file (max 1024px)
-    const scaledImagePath = await scaleImageToTemp(imagePath, 1024);
+    // Scale image to temporary file (max 512px)
+    const scaledImagePath = await scaleImageToTemp(imagePath, 512);
     
     // Read scaled image file and convert to base64
     const { readFile: fsReadFile, stat } = await import('fs/promises');
@@ -291,7 +294,7 @@ async function generateAltText(
     
     // Check scaled file size
     const stats = await stat(scaledImagePath);
-    const fileSizeMB = stats.size / (1024 * 1024);
+    const fileSizeMB = stats.size / (512 * 512);
     
     if (fileSizeMB > 5) {
       console.warn(`${colors.yellow}⚠️  Scaled image still large (${fileSizeMB.toFixed(1)}MB), this may take longer...${colors.reset}`);
@@ -536,10 +539,11 @@ async function updateAltText(img: ImageReference, newAlt: string): Promise<void>
       // Replace alt in PictureGrid component image object (JavaScript string literal context)
       // Use JavaScript string escaping
       const jsEscaped = escapeJsString(newAlt);
-      if (line.match(/\balt:\s*(["'])((?:(?!\1).)*?)\1/)) {
+      // Match alt with proper handling of escaped quotes for both single and double quotes
+      if (line.match(/\balt:\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/)) {
         // Alt exists, replace it
         updatedLine = line.replace(
-          /\balt:\s*(["'])((?:(?!\1).)*?)\1/,
+          /\balt:\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/,
           `alt: "${jsEscaped}"`
         );
       } else {
