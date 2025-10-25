@@ -20,17 +20,17 @@
 		return 'lg';
 	};
 
-	// Separate series (group: tags) from regular topics
+	// Separate series (serie/ tags) from regular topics
 	const seriesTags = $derived(
 		data.tagsInfo.tags
-			.filter((tagAcc) => tagAcc.tag.startsWith('group: '))
+			.filter((tagAcc) => tagAcc.tag.startsWith('serie/'))
 			.map((tagAcc) => ({
 				...tagAcc,
-				displayName: tagAcc.tag.replace('group: ', '')
+				displayName: tagAcc.tag.replace('serie/', '')
 			}))
 	);
 	const topicTags = $derived(
-		data.tagsInfo.tags.filter((tagAcc) => !tagAcc.tag.startsWith('group: '))
+		data.tagsInfo.tags.filter((tagAcc) => !tagAcc.tag.startsWith('serie/'))
 	);
 
 	const locale = 'fr';
